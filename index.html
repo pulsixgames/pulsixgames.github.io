@@ -71,10 +71,10 @@ input:focus{outline:none;border-color:rgba(255,255,255,.35);background:rgba(255,
 </div>
  
 <div class="box" id="realContent" style="display:none">
-  <h1>Fix Selector</h1>
+  <h1>Cloak Selector</h1>
   <div class="row">
-    <button class="btn" id="bypass-button">Fix</button>
-    <div class="nofix"><a href="site">No Fix</a><small>less features</small></div>
+    <button class="btn" id="bypass-button">Cloak</button>
+    <div class="nofix"><a href="site">No Cloak</a><small>less features</small></div>
   </div>
   <div id="random-text"></div>
 </div>
@@ -92,11 +92,11 @@ const style=document.createElement('style');
 style.textContent=\`
 body{margin:0;background:#0a0a0a}
 iframe{width:100vw;height:100vh;border:none}
-#go-home-btn{position:fixed;top:20px;right:20px;width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-size:24px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:linear-gradient(135deg,#ffffff,#b4b4ba);color:#0a0a0a;cursor:pointer;white-space:nowrap;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.3,1.7,.5,1),box-shadow .25s}
+#go-home-btn{position:fixed;top:10px;right:10px;width:27px;height:27px;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:linear-gradient(135deg,#ffffff,#b4b4ba);color:#0a0a0a;cursor:pointer;white-space:nowrap;overflow:hidden;box-shadow:0 4px 11px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.3,1.7,.5,1),box-shadow .25s}
 #go-home-btn:hover{transform:translateY(-2px)}
 #go-home-btn:active{transform:scale(.9)}
-#go-home-btn.expanded{width:auto;border-radius:18px;padding:0 20px;font:600 1rem sans-serif}
-#go-home-btn span{margin-left:10px;font-size:1rem;display:none}
+#go-home-btn.expanded{width:auto;border-radius:9px;padding:0 10px;font:600 0.5rem sans-serif}
+#go-home-btn span{margin-left:5px;font-size:0.5rem;display:none}
 #go-home-btn.expanded span{display:inline}
 \`;
 document.head.appendChild(style);
@@ -115,13 +115,18 @@ document.getElementById('bypass-button').addEventListener('click',()=>launchCloa
 document.getElementById('passwordInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPassword()});
  
 const randomTexts=[
-"Welcome back!","Don't let the teachers catch ya!","I've got my eye on you...",
+"Welcome back!",
+"Don't let the teachers catch ya!",
+"I've got my eye on you...",
 "Would you rather play video games or do your school work? I know which one you chose.",
-"Does anyone want to hop on some games?","I have a dream that every kid will be able to play video games in school.",
+"Does anyone want to hop on some games?",
+"I have a dream that every kid will be able to play video games in school.",
 "Fun Fact: This text has a 1 in 1,000,000 chance of appearing! Edit: No it doesn't that's a lie.",
 "Fun Fact: This text has a 1 in 12 chance of appearing! Edit: It really does and it's not a lie.",
 "This text appearing 1 out of 12 times means there are 11 other quotes like this waiting to be discovered!",
-".(emit-eerf evah uoy sselun) krow ruoy oD","Special thanks to you!","Recommend some games you like using the request form!"];
+".(emit-eerf evah uoy sselun) krow ruoy oD",
+ "Special thanks to you!",
+ "Recommend some games you like using the request form!",
  
 function unlockSite(){
   const gate=document.getElementById('gate');
