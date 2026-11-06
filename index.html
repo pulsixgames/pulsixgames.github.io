@@ -101,7 +101,7 @@ iframe{width:100vw;height:100vh;border:none}
 \`;
 document.head.appendChild(style);
 const iframe=document.createElement('iframe');iframe.src='${frameSrc}';document.body.appendChild(iframe);
-const b=document.createElement('button');b.id='go-home-btn';b.innerHTML='🏠<span>Go Home</span>';
+const b=document.createElement('button');b.id='go-home-btn';b.innerHTML='🏠︎<span>Go Home</span>';
 b.addEventListener('mouseenter',()=>b.classList.add('expanded'));
 b.addEventListener('mouseleave',()=>b.classList.remove('expanded'));
 b.addEventListener('click',()=>{iframe.src=iframe.src});
