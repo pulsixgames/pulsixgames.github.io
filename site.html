@@ -1,234 +1,747 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G4MQ8PHH7T"></script>
-<script src="/ruffle/ruffle.js"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-G4MQ8PHH7T');</script>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Menu</title>
-<script>try{const s=JSON.parse(localStorage.getItem("bbg_settings")||"{}"),r=document.documentElement;if(s.theme)r.dataset.theme=s.theme;if(s.pulse===false)r.classList.add("no-pulse");if(s.glow===false)r.classList.add("no-glow");if(s.recent===false)r.classList.add("no-recent")}catch(e){}</script>
-<style>
+ 
+  <!-- =====================================================
+       site.html  —  main games page
+       Sections:  1 Head  ·  2 Styles  ·  3 Sidebar  ·  4 Main
+                  5 Modals  ·  6 Game list  ·  7 Script
+       ===================================================== -->
+ 
+  <!-- 1. HEAD: analytics, Ruffle (Flash), meta -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-G4MQ8PHH7T"></script>
+  <script src="/ruffle/ruffle.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-G4MQ8PHH7T');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Menu</title>
+ 
+  <!-- Apply saved settings before the page paints (prevents a flash of the default palette) -->
+  <script>
+    try {
+      const s = JSON.parse(localStorage.getItem("bbg_settings") || "{}");
+      const r = document.documentElement;
+      if (s.theme) r.dataset.theme = s.theme;
+      if (s.pulse === false) r.classList.add("no-pulse");
+      if (s.glow === false) r.classList.add("no-glow");
+      if (s.recent === false) r.classList.add("no-recent");
+    } catch (e) {}
+  </script>
+ 
+  <!-- 2. STYLES -->
+  <style>
+/* ==========================================================================
+   TABLE OF CONTENTS
+    1. Fonts & theme variables      7. Press effects (shared)
+    2. Base                         8. Changelog, links, footer
+    3. Background (glows + pulse)   9. Modals (log in + settings)
+    4. Sidebar                     10. Back-to-top + Home buttons
+    5. Buttons                     11. Color palettes (neon, black, blue, pink)
+    6. Main (search, filters,      12. Small screens
+       recently played, games)
+   ========================================================================== */
+ 
+ 
+/* ==========================================================================
+   1. FONTS & THEME VARIABLES  (default palette = Neon)
+   ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;600&display=swap');
-:root{--night:#0a0a0a;--plum:#161616;--card:#1d1d1f;--line:rgba(255,255,255,.12);--text:#f2f2f2;--dim:#a1a1a6;--orange:#ffffff;--pink:#b4b4ba;--mint:#e6e6e8;--r:22px;--blob1:#4a4a50;--blob2:#2e2e33;--blob3:#55555c;--side:rgba(10,10,10,.7);--panel:rgba(30,30,32,.55);--glow:180,180,190;--on:#0a0a0a}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--night);color:var(--dim);min-height:100vh;display:flex}
-:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
-/* animated sunset background */
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-.bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 26s ease-in-out infinite alternate}
-.bg i:nth-child(1){width:46vw;height:46vw;background:var(--blob1);top:-14vw;left:-10vw}
-.bg i:nth-child(2){width:40vw;height:40vw;background:var(--blob2);bottom:-16vw;right:-8vw;animation-delay:-9s;opacity:.38}
-.bg i:nth-child(3){width:34vw;height:34vw;background:var(--blob3);top:30%;left:45%;animation-delay:-16s;opacity:.35}
-@keyframes drift{to{transform:translate(8vw,6vh) scale(1.15)}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* sidebar */
-aside{position:sticky;top:0;height:100vh;width:250px;flex-shrink:0;z-index:20;padding:22px 16px;display:flex;flex-direction:column;gap:6px;background:var(--side);backdrop-filter:blur(18px);border-right:1px solid var(--line)}
-.logo{font-family:'Bricolage Grotesque';font-weight:800;font-size:1.5rem;color:var(--text);line-height:1;padding:4px 10px 4px}
-.logo small{display:block;font:500 .75rem 'DM Sans';color:var(--dim);margin-top:6px}
-.nav{display:flex;flex-direction:column;gap:4px;margin-top:18px}
-.nav button,.nav a{all:unset;box-sizing:border-box;cursor:pointer;padding:10px 14px;border-radius:14px;color:var(--dim);font-weight:500;font-size:.95rem;display:flex;justify-content:space-between;align-items:center;transition:.2s}
-.nav button:hover,.nav a:hover{background:rgba(255,255,255,.08);color:var(--text)}
-.nav .on{background:var(--text);color:var(--night);font-weight:600}
-.nav .sub{margin:14px 14px 4px;font-size:.78rem;color:var(--dim);opacity:.7}
-.count{font-size:.75rem;opacity:.8}
-.acct{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
-.acct .me{display:flex;align-items:center;gap:10px;color:var(--text);font-weight:600}
-.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font:800 1rem 'Bricolage Grotesque';color:var(--night);background:var(--mint)}
-.btn{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;padding:11px 16px;border-radius:14px;font-weight:600;font-size:.92rem;transition:.2s}
-.btn.main{background:linear-gradient(135deg,var(--orange),var(--pink));color:var(--on);width:100%}
-.btn.main:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(var(--glow),.4)}
-.btn.ghost{background:rgba(255,255,255,.08);color:var(--text)}
-.btn.ghost:hover{background:rgba(255,255,255,.16)}
-/* main */
-main{flex:1;min-width:0;position:relative;z-index:10;padding:26px clamp(16px,3vw,40px) 40px}
-.top{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-#search{flex:1;min-width:200px;position:relative}
-#search input{width:100%;padding:14px 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--text);font:500 1rem 'DM Sans'}
-#search input::placeholder{color:var(--dim)}
-#pane{position:absolute;top:calc(100% + 8px);left:0;right:0;max-height:340px;overflow:auto;background:var(--plum);border:1px solid var(--line);border-radius:18px;padding:6px;display:none;z-index:50;box-shadow:0 20px 50px rgba(0,0,0,.5)}
-#pane a{display:flex;align-items:center;gap:12px;padding:7px;border-radius:12px;color:var(--text);text-decoration:none}
-#pane a:hover{background:rgba(255,255,255,.1)}
-#pane img{width:40px;height:40px;border-radius:10px;object-fit:cover}
-h2.head{font-family:'Bricolage Grotesque';font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--text);margin:26px 0 4px;letter-spacing:-.02em}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px}
-.chip{all:unset;cursor:pointer;padding:7px 15px;border-radius:999px;border:1px solid var(--line);font-size:.85rem;font-weight:500;color:var(--dim);transition:.2s}
-.chip:hover{color:var(--text);border-color:var(--dim)}
-.chip.on{background:var(--mint);color:var(--night);border-color:var(--mint);font-weight:600}
-.rail{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:thin}
-.rail a{flex:0 0 120px;text-decoration:none;color:var(--text);font-size:.8rem;font-weight:500;text-align:center}
-.rail img{width:120px;height:80px;object-fit:cover;border-radius:14px;display:block;margin-bottom:6px}
-.sec{font-family:'Bricolage Grotesque';color:var(--text);font-size:1.15rem;margin:22px 0 8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;margin-top:16px}
-.card{position:relative;background:var(--card);border-radius:var(--r);overflow:hidden;border:1px solid var(--line);transition:transform .25s,box-shadow .25s}
-.card:hover{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 18px 36px rgba(0,0,0,.45)}
-.card a{display:block;text-decoration:none}
-.card img{width:100%;aspect-ratio:1/.82;object-fit:cover;display:block}
-.card b{display:block;padding:11px 14px 13px;color:var(--text);font-weight:600;font-size:.92rem}
-.fav{all:unset;position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--side);color:#fff;font-size:1.05rem;backdrop-filter:blur(6px);transition:.2s}
-.fav:hover{transform:scale(1.12)}.fav.on{color:var(--pink)}
-.empty{color:var(--dim);padding:30px 0}
-/* changelog + links */
-.info{display:flex;gap:22px;flex-wrap:wrap;margin-top:50px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px}
-.panel h3{font-family:'Bricolage Grotesque';color:var(--text);margin-bottom:14px}
-.entry{border-left:3px solid var(--orange);padding-left:14px;margin-bottom:16px;font-size:.92rem;line-height:1.5}
-.entry h4{color:var(--text);font-size:.98rem;margin-bottom:3px}
-.links a{display:block;margin-bottom:10px;text-decoration:none}
-footer{margin-top:40px;text-align:center;font-size:.88rem;line-height:2}
-footer a{color:var(--mint)}
-/* modal */
-.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;place-items:center;padding:16px}
-.modal.open{display:grid}
-.box{width:100%;max-width:380px;background:var(--plum);border:1px solid var(--line);border-radius:26px;padding:30px;color:var(--dim)}
-.box h3{font-family:'Bricolage Grotesque';font-size:1.6rem;color:var(--text);margin-bottom:16px}
-.box label{display:block;font-size:.85rem;margin:12px 0 5px}
-.box input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--text);font:500 1rem 'DM Sans'}
-.box .btn{margin-top:18px}
-.msg{color:#ff8fa8;font-size:.88rem;margin-top:10px;min-height:1.2em}
-.swap{margin-top:14px;font-size:.88rem;text-align:center}.swap a{color:var(--mint);cursor:pointer}
-@media(max-width:820px){body{flex-direction:column}aside{position:static;height:auto;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:0;border-bottom:1px solid var(--line)}.nav{flex-direction:row;flex-wrap:wrap;margin:0}.nav .sub{display:none}.acct{margin:0 0 0 auto;border:0;padding:0}}
-/* ---- v1.306: motion, press effect, to-top, modal ---- */
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes pop{40%{transform:scale(1.55)}100%{transform:scale(1)}}
-.logo{font-size:1.5rem;white-space:nowrap}.logo .v{color:var(--orange)}
-.btn,.chip,.nav button,.nav a,.fav{transition:transform .4s cubic-bezier(.3,1.7,.5,1),background .25s,color .25s,box-shadow .25s,border-color .25s,filter .2s;-webkit-tap-highlight-color:transparent;user-select:none}
-.btn:active,.btn.main:active,.chip:active,.nav button:active,.nav a:active,.fav:active,.fav.on:active{transform:scale(.9) translateY(1px);filter:brightness(.88);transition-duration:.08s}
-.card:active{transform:scale(.97)!important}
-.btn[disabled]{opacity:.6;pointer-events:none}
-.fav.pop{animation:pop .4s ease}
-.empty.in,#recentRail.in{animation:rise .45s ease both}
-#pane{display:block;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .2s,transform .25s,visibility 0s .25s}
-#pane.open{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .25s}
-.modal{display:grid;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s .3s}
-.modal.open{opacity:1;visibility:visible;transition:opacity .3s ease}
-.box{transform:translateY(20px) scale(.94);transition:transform .5s cubic-bezier(.2,1.25,.3,1)}
-.modal.open .box{transform:none}
-#mForm{transition:opacity .15s}
-#toTop{all:unset;position:fixed;right:22px;bottom:22px;z-index:60;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;cursor:pointer;font:800 1.15rem 'Bricolage Grotesque';color:var(--on);background:linear-gradient(135deg,var(--orange),var(--pink));box-shadow:0 8px 22px rgba(var(--glow),.4);opacity:0;pointer-events:none;transform:translateY(18px) scale(.8);transition:opacity .3s,transform .4s cubic-bezier(.3,1.7,.5,1),box-shadow .25s,filter .2s}
-#toTop span{display:block;transition:transform .3s cubic-bezier(.3,1.7,.5,1)}
-#toTop.show{opacity:1;pointer-events:auto;transform:none}
-#toTop.show:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(var(--glow),.55);filter:brightness(1.08)}
-#toTop.show:hover span{transform:translateY(-3px)}
-#toTop.show:active{transform:scale(.86);transition-duration:.08s}
-#toTop:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
-.grid{align-content:start;position:relative}
-/* background beat: 110 BPM = 60/110 s = .5455s per pulse */
-.bg::before,.bg::after{content:"";position:absolute;inset:-25%;pointer-events:none}
-.bg::after{background:radial-gradient(circle,transparent 38%,rgba(255,255,255,.075) 58%,transparent 76%);animation:beatRing .5455s cubic-bezier(.3,.6,.4,1) infinite}
-.bg::before{background:radial-gradient(circle at center,rgba(255,255,255,.05),transparent 45%);animation:beatGlow .5455s ease-out infinite}
-@keyframes beatRing{0%{transform:scale(1.35);opacity:0}25%{opacity:1}100%{transform:scale(.6);opacity:0}}
-@keyframes beatGlow{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
-/* Jump back in: hover + press like the cards */
-.rail{padding:12px 6px 16px}
-.rail a{transition:transform .4s cubic-bezier(.3,1.7,.5,1),color .25s;-webkit-tap-highlight-color:transparent}
-.rail img{border:1px solid var(--line);transition:box-shadow .3s,border-color .3s,filter .3s}
-.rail a:hover{transform:translateY(-6px) rotate(-.6deg);color:#fff}
-.rail a:hover img{box-shadow:0 14px 28px rgba(0,0,0,.55);border-color:rgba(255,255,255,.3);filter:brightness(1.08)}
-.rail a:active{transform:scale(.93);transition-duration:.08s}
-.rail a:focus-visible{outline:3px solid var(--mint);outline-offset:3px;border-radius:14px}
-/* ---- palettes + settings ---- */
-html[data-theme=blue]{--night:#060b1a;--plum:#0e1830;--card:#14224a;--line:rgba(160,190,255,.16);--text:#eef3ff;--dim:#9db0dc;--orange:#9fd0ff;--pink:#4d7cff;--mint:#8fc0ff;--blob1:#2b57ff;--blob2:#1a3a9c;--blob3:#3d8bff;--side:rgba(6,11,26,.72);--panel:rgba(20,34,74,.55);--glow:77,124,255;--on:#06102a}
-html[data-theme=pink]{--night:#14060f;--plum:#240f1d;--card:#341828;--line:rgba(255,170,210,.16);--text:#fff0f7;--dim:#d9a9c2;--orange:#ffc2dd;--pink:#ff4d94;--mint:#ffb3d4;--blob1:#ff4d94;--blob2:#a02a68;--blob3:#ff8fb8;--side:rgba(20,6,15,.72);--panel:rgba(52,24,40,.55);--glow:255,77,148;--on:#2a0716}
-body{transition:background .5s,color .5s}.bg i{transition:background .8s}
-.no-pulse .bg::before,.no-pulse .bg::after{display:none}
-.no-glow .bg i{animation:none}
-.no-recent #recentRail{display:none!important}
-.gear{display:inline-block;transition:transform .6s cubic-bezier(.3,1.5,.5,1)}
-#openSettings:hover .gear{transform:rotate(120deg)}
-.sbox{max-width:440px;max-height:90vh;overflow:auto}
-.set{padding:14px 0;border-top:1px solid var(--line)}
-.set.row{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.sl b{display:block;color:var(--text);font-weight:600;font-size:.98rem}
-.sl span{display:block;font-size:.82rem;margin-top:2px;line-height:1.4}
-.pals{display:flex;gap:14px;margin-top:14px}
-.pal{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;padding:12px 6px;border-radius:16px;font-size:.85rem;font-weight:500;color:var(--dim);transition:transform .4s cubic-bezier(.3,1.7,.5,1),background .25s,color .25s}
-.pal i{width:48px;height:48px;border-radius:50%;border:2px solid var(--line);transition:box-shadow .3s,transform .4s cubic-bezier(.3,1.7,.5,1)}
-.pal:hover{background:rgba(255,255,255,.07);color:var(--text)}.pal:hover i{transform:scale(1.1)}
-.pal[aria-pressed=true]{color:var(--text);background:rgba(255,255,255,.09)}
-.pal[aria-pressed=true] i{box-shadow:0 0 0 3px var(--plum),0 0 0 5px var(--text)}
-.pal:active{transform:scale(.92);transition-duration:.08s}
-.pal:focus-visible,.sw:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
-.sw{all:unset;box-sizing:border-box;flex-shrink:0;width:48px;height:28px;border-radius:999px;background:rgba(255,255,255,.16);position:relative;cursor:pointer;transition:background .3s}
-.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .4s cubic-bezier(.3,1.6,.5,1),width .15s}
-.sw[aria-checked=true]{background:var(--mint)}
-.sw[aria-checked=true]::after{transform:translateX(20px)}
-.sw:active::after{width:28px}.sw[aria-checked=true]:active::after{transform:translateX(14px)}
-</style>
+ 
+:root {
+  --night: #13102b;                 /* page background */
+  --plum:  #241a4a;                 /* modals, dropdowns */
+  --card:  #2d2260;                 /* game cards */
+  --line:  rgba(255,255,255,.12);   /* borders */
+  --text:  #f6f1ff;
+  --dim:   #b3a8d6;
+  --orange:#ff8a4c;                 /* accent gradient start */
+  --pink:  #ff5fa2;                 /* accent gradient end */
+  --mint:  #5ef2c4;                 /* focus rings, active chips, switches */
+  --r: 22px;                        /* card / panel radius */
+  --blob1: #ff5fa2;                 /* drifting background glows */
+  --blob2: #ff8a4c;
+  --blob3: #6a4cff;
+  --side:  rgba(19,16,43,.7);       /* sidebar glass */
+  --panel: rgba(45,34,96,.55);      /* changelog / links panels */
+  --glow:  255,95,162;              /* RGB used for button glows */
+  --on:    #1a0f2e;                 /* text on accent buttons */
+}
+ 
+ 
+/* ==========================================================================
+   2. BASE
+   ========================================================================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+ 
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--night);
+  color: var(--dim);
+  min-height: 100vh;
+  display: flex;
+  transition: background .5s, color .5s;
+}
+ 
+:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+ 
+/* Shared animations */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes pop  { 40% { transform: scale(1.55); } 100% { transform: scale(1); } }
+ 
+/* Respect "reduce motion" system setting */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+ 
+ 
+/* ==========================================================================
+   3. BACKGROUND  (drifting glows + 110 BPM pulse)
+   ========================================================================== */
+.bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+ 
+/* drifting glows */
+.bg i {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .5;
+  animation: drift 26s ease-in-out infinite alternate;
+  transition: background .8s;
+}
+.bg i:nth-child(1) { width: 46vw; height: 46vw; background: var(--blob1); top: -14vw;    left: -10vw; }
+.bg i:nth-child(2) { width: 40vw; height: 40vw; background: var(--blob2); bottom: -16vw; right: -8vw;  animation-delay: -9s;  opacity: .38; }
+.bg i:nth-child(3) { width: 34vw; height: 34vw; background: var(--blob3); top: 30%;      left: 45%;    animation-delay: -16s; opacity: .35; }
+@keyframes drift { to { transform: translate(8vw, 6vh) scale(1.15); } }
+ 
+/* pulse: ring shrinking inward + faint center glow.  110 BPM = 60/110 s = .5455s per beat */
+.bg::before, .bg::after { content: ""; position: absolute; inset: -25%; pointer-events: none; }
+.bg::after {
+  background: radial-gradient(circle, transparent 38%, rgba(255,255,255,.075) 58%, transparent 76%);
+  animation: beatRing .5455s cubic-bezier(.3,.6,.4,1) infinite;
+}
+.bg::before {
+  background: radial-gradient(circle at center, rgba(255,255,255,.05), transparent 45%);
+  animation: beatGlow .5455s ease-out infinite;
+}
+@keyframes beatRing { 0% { transform: scale(1.35); opacity: 0; } 25% { opacity: 1; } 100% { transform: scale(.6); opacity: 0; } }
+@keyframes beatGlow { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+ 
+/* turned off from Settings */
+.no-pulse .bg::before, .no-pulse .bg::after { display: none; }
+.no-glow .bg i { animation: none; }
+ 
+ 
+/* ==========================================================================
+   4. SIDEBAR
+   ========================================================================== */
+aside {
+  position: sticky; top: 0;
+  height: 100vh; width: 250px; flex-shrink: 0;
+  z-index: 20;
+  padding: 22px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  background: var(--side);
+  backdrop-filter: blur(18px);
+  border-right: 1px solid var(--line);
+}
+ 
+/* logo */
+.logo {
+  font-family: 'Bricolage Grotesque';
+  font-weight: 800; font-size: 1.5rem; line-height: 1;
+  color: var(--text);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.logo small { display: block; font: 500 .75rem 'DM Sans'; color: var(--dim); margin-top: 6px; }
+ 
+/* navigation */
+.nav { display: flex; flex-direction: column; gap: 4px; margin-top: 18px; }
+.nav button {
+  all: unset; box-sizing: border-box;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 14px;
+  color: var(--dim); font-weight: 500; font-size: .95rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav button:hover { background: rgba(255,255,255,.08); color: var(--text); }
+.nav .on  { background: var(--text); color: var(--night); font-weight: 600; }
+.nav .sub { margin: 14px 14px 4px; font-size: .78rem; color: var(--dim); opacity: .7; }  /* "More" heading */
+.count    { font-size: .75rem; opacity: .8; }                                              /* favorites number */
+ 
+/* settings gear spins on hover */
+.gear { display: inline-block; transition: transform .6s cubic-bezier(.3,1.5,.5,1); }
+#openSettings:hover .gear { transform: rotate(120deg); }
+ 
+/* account area (bottom of sidebar) */
+.acct { margin-top: auto; border-top: 1px solid var(--line); padding-top: 14px; }
+.acct .me { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; }
+.av {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  font: 800 1rem 'Bricolage Grotesque';
+  color: var(--night); background: var(--mint);
+}
+ 
+ 
+/* ==========================================================================
+   5. BUTTONS
+   ========================================================================== */
+.btn {
+  all: unset; box-sizing: border-box;
+  cursor: pointer; text-align: center;
+  padding: 11px 16px;
+  border-radius: 14px;
+  font-weight: 600; font-size: .92rem;
+}
+.btn.main { background: linear-gradient(135deg, var(--orange), var(--pink)); color: var(--on); width: 100%; }
+.btn.main:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(var(--glow), .4); }
+.btn.ghost { background: rgba(255,255,255,.08); color: var(--text); }
+.btn.ghost:hover { background: rgba(255,255,255,.16); }
+.btn[disabled] { opacity: .6; pointer-events: none; }
+ 
+ 
+/* ==========================================================================
+   6. MAIN
+   ========================================================================== */
+main { flex: 1; min-width: 0; position: relative; z-index: 10; padding: 26px clamp(16px, 3vw, 40px) 40px; }
+ 
+/* ---- search ---- */
+.top { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+#search { flex: 1; min-width: 200px; position: relative; }
+#search input {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.07);
+  color: var(--text);
+  font: 500 1rem 'DM Sans';
+}
+#search input::placeholder { color: var(--dim); }
+ 
+/* results dropdown (fades in when .open) */
+#pane {
+  position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+  max-height: 340px; overflow: auto;
+  background: var(--plum);
+  border: 1px solid var(--line); border-radius: 18px;
+  padding: 6px;
+  z-index: 50;
+  box-shadow: 0 20px 50px rgba(0,0,0,.5);
+  display: block; opacity: 0; visibility: hidden; transform: translateY(-8px);
+  transition: opacity .2s, transform .25s, visibility 0s .25s;
+}
+#pane.open { opacity: 1; visibility: visible; transform: none; transition: opacity .2s, transform .25s; }
+#pane a { display: flex; align-items: center; gap: 12px; padding: 7px; border-radius: 12px; color: var(--text); text-decoration: none; }
+#pane a:hover { background: rgba(255,255,255,.1); }
+#pane img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+ 
+/* ---- heading + filters ---- */
+h2.head {
+  font-family: 'Bricolage Grotesque'; font-weight: 800;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--text);
+  margin: 26px 0 4px;
+  letter-spacing: -.02em;
+}
+.label { display: block; font: 500 .75rem 'DM Sans'; color: var(--dim); margin-top: 10px; }  /* small "Filters" header */
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 6px; }
+.chip {
+  all: unset; cursor: pointer;
+  padding: 7px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: .85rem; font-weight: 500; color: var(--dim);
+}
+.chip:hover { color: var(--text); border-color: var(--dim); }
+.chip.on { background: var(--mint); color: var(--night); border-color: var(--mint); font-weight: 600; }
+ 
+/* ---- "Jump back in" row ---- */
+.sec { font-family: 'Bricolage Grotesque'; color: var(--text); font-size: 1.15rem; margin: 22px 0 8px; }
+.rail { display: flex; gap: 12px; overflow-x: auto; padding: 12px 6px 16px; scrollbar-width: thin; }
+.rail a {
+  flex: 0 0 120px;
+  text-decoration: none; text-align: center;
+  color: var(--text); font-size: .8rem; font-weight: 500;
+  transition: transform .4s cubic-bezier(.3,1.7,.5,1), color .25s;
+  -webkit-tap-highlight-color: transparent;
+}
+.rail img {
+  width: 120px; height: 80px;
+  object-fit: cover; display: block;
+  border-radius: 14px; margin-bottom: 6px;
+  border: 1px solid var(--line);
+  transition: box-shadow .3s, border-color .3s, filter .3s;
+}
+.rail a:hover { transform: translateY(-6px) rotate(-.6deg); color: #fff; }
+.rail a:hover img { box-shadow: 0 14px 28px rgba(0,0,0,.55); border-color: rgba(255,255,255,.3); filter: brightness(1.08); }
+.rail a:active { transform: scale(.93); transition-duration: .08s; }
+.rail a:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; border-radius: 14px; }
+#recentRail.in { animation: rise .45s ease both; }
+.no-recent #recentRail { display: none !important; }   /* turned off from Settings */
+ 
+/* ---- games grid + cards ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+  align-content: start;
+  position: relative;
+}
+.card {
+  position: relative;
+  background: var(--card);
+  border-radius: var(--r);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transition: transform .45s cubic-bezier(.2,.9,.25,1), box-shadow .25s;
+}
+/* tilts toward the mouse (--rx / --ry / --mx / --my are set by the script) */
+.card:hover {
+  transform: perspective(800px) translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  box-shadow: 0 18px 36px rgba(0,0,0,.45);
+  transition: transform .12s ease-out, box-shadow .25s;   /* follows the mouse closely */
+}
+.card::after {                /* soft light that follows the mouse */
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.2), transparent 55%);
+  opacity: 0; transition: opacity .25s;
+}
+.card:hover::after { opacity: 1; }
+.card:active { transform: scale(.97) !important; }
+.card a   { display: block; text-decoration: none; }
+.card img { width: 100%; aspect-ratio: 1 / .82; object-fit: cover; display: block; }
+.card b   { display: block; padding: 11px 14px 13px; color: var(--text); font-weight: 600; font-size: .92rem; }
+ 
+/* favorite heart */
+.fav {
+  all: unset;
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center;
+  cursor: pointer;
+  background: var(--side); color: #fff; font-size: 1.05rem;
+  backdrop-filter: blur(6px);
+}
+.fav:hover { transform: scale(1.12); }
+.fav.on { color: var(--pink); }
+.fav.pop { animation: pop .4s ease; }
+ 
+/* empty message */
+.empty { color: var(--dim); padding: 30px 0; }
+.empty.in { animation: rise .45s ease both; }
+ 
+ 
+/* ==========================================================================
+   7. PRESS EFFECTS  (hold = squish in, release = spring back)
+   NOTE: must stay below the rules above, because those use `all: unset`.
+   ========================================================================== */
+.btn, .chip, .nav button, .fav {
+  transition: transform .4s cubic-bezier(.3,1.7,.5,1), background .25s, color .25s, box-shadow .25s, border-color .25s, filter .2s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.btn:active, .btn.main:active, .chip:active, .nav button:active, .fav:active, .fav.on:active {
+  transform: scale(.9) translateY(1px);
+  filter: brightness(.88);
+  transition-duration: .08s;
+}
+ 
+ 
+/* ==========================================================================
+   8. CHANGELOG, LINKS, FOOTER
+   ========================================================================== */
+.info { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 50px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; }
+.panel h3 { font-family: 'Bricolage Grotesque'; color: var(--text); margin-bottom: 14px; }
+.entry { border-left: 3px solid var(--orange); padding-left: 14px; margin-bottom: 16px; font-size: .92rem; line-height: 1.5; }
+.entry h4 { color: var(--text); font-size: .98rem; margin-bottom: 3px; }
+.links a { display: block; margin-bottom: 10px; text-decoration: none; }
+footer { margin-top: 40px; text-align: center; font-size: .88rem; line-height: 2; }
+footer a { color: var(--mint); }
+ 
+ 
+/* ==========================================================================
+   9. MODALS  (log in / sign up + settings)
+   ========================================================================== */
+.modal {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(8px);
+  display: grid; place-items: center;
+  padding: 16px;
+  opacity: 0; visibility: hidden;
+  transition: opacity .3s ease, visibility 0s .3s;
+}
+.modal.open { opacity: 1; visibility: visible; transition: opacity .3s ease; }
+ 
+.box {
+  width: 100%; max-width: 380px;
+  background: var(--plum);
+  border: 1px solid var(--line); border-radius: 26px;
+  padding: 30px;
+  color: var(--dim);
+  transform: translateY(20px) scale(.94);
+  transition: transform .5s cubic-bezier(.2,1.25,.3,1);
+}
+.modal.open .box { transform: none; }
+.box h3 { font-family: 'Bricolage Grotesque'; font-size: 1.6rem; color: var(--text); margin-bottom: 16px; }
+.box label { display: block; font-size: .85rem; margin: 12px 0 5px; }
+.box input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.07);
+  color: var(--text);
+  font: 500 1rem 'DM Sans';
+}
+.box .btn { margin-top: 18px; }
+ 
+/* ---- log in form ---- */
+#mForm { transition: opacity .15s; }
+.msg  { color: #ff8fa8; font-size: .88rem; margin-top: 10px; min-height: 1.2em; }
+.swap { margin-top: 14px; font-size: .88rem; text-align: center; }
+.swap a { color: var(--mint); cursor: pointer; }
+ 
+/* ---- settings ---- */
+.sbox { max-width: 440px; max-height: 90vh; overflow: auto; }
+.set { padding: 14px 0; border-top: 1px solid var(--line); }
+.set.row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.sl b { display: block; color: var(--text); font-weight: 600; font-size: .98rem; }
+.sl span { display: block; font-size: .82rem; margin-top: 2px; line-height: 1.4; }
+ 
+/* palette picker */
+.pals { display: flex; gap: 10px; margin-top: 14px; }
+.pal {
+  all: unset; box-sizing: border-box;
+  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  flex: 1; padding: 12px 6px;
+  border-radius: 16px;
+  font-size: .85rem; font-weight: 500; color: var(--dim);
+  transition: transform .4s cubic-bezier(.3,1.7,.5,1), background .25s, color .25s;
+}
+.pal i {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 2px solid var(--line);
+  transition: box-shadow .3s, transform .4s cubic-bezier(.3,1.7,.5,1);
+}
+.pal:hover { background: rgba(255,255,255,.07); color: var(--text); }
+.pal:hover i { transform: scale(1.1); }
+.pal[aria-pressed=true] { color: var(--text); background: rgba(255,255,255,.09); }
+.pal[aria-pressed=true] i { box-shadow: 0 0 0 3px var(--plum), 0 0 0 5px var(--text); }
+.pal:active { transform: scale(.92); transition-duration: .08s; }
+ 
+/* on/off switch */
+.sw {
+  all: unset; box-sizing: border-box;
+  flex-shrink: 0; position: relative;
+  width: 48px; height: 28px; border-radius: 999px;
+  background: rgba(255,255,255,.16);
+  cursor: pointer;
+  transition: background .3s;
+}
+.sw::after {
+  content: ""; position: absolute; top: 3px; left: 3px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.4);
+  transition: transform .4s cubic-bezier(.3,1.6,.5,1), width .15s;
+}
+.sw[aria-checked=true] { background: var(--mint); }
+.sw[aria-checked=true]::after { transform: translateX(20px); }
+.sw:active::after { width: 28px; }
+.sw[aria-checked=true]:active::after { transform: translateX(14px); }
+.pal:focus-visible, .sw:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+ 
+ 
+/* ==========================================================================
+   10. BACK-TO-TOP + HOME BUTTONS, GAME VIEWER
+   ========================================================================== */
+ 
+/* ---- back-to-top arrow (bottom right) ---- */
+#toTop {
+  all: unset;
+  position: fixed; right: 22px; bottom: 22px; z-index: 60;
+  width: 42px; height: 42px; border-radius: 50%;
+  display: grid; place-items: center;
+  overflow: hidden; cursor: pointer;
+  font: 800 1.15rem 'Bricolage Grotesque'; color: var(--on);
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  box-shadow: 0 8px 22px rgba(var(--glow), .4);
+  /* hidden until you scroll down */
+  opacity: 0; pointer-events: none; transform: translateY(18px) scale(.8);
+  transition: opacity .3s, transform .4s cubic-bezier(.3,1.7,.5,1), box-shadow .25s, filter .2s;
+}
+#toTop span { position: relative; display: block; transition: transform .3s cubic-bezier(.3,1.7,.5,1); }
+#toTop::before {              /* light sheen sweeping across on hover */
+  content: ""; position: absolute; top: 0; left: -80%;
+  width: 45%; height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(255,255,255,.45), transparent);
+  transform: skewX(-18deg);
+  transition: left .6s ease;
+}
+#toTop.show { opacity: 1; pointer-events: auto; transform: none; }
+#toTop.show:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(var(--glow), .55); filter: brightness(1.08); }
+#toTop.show:hover span { transform: translateY(-3px); }
+#toTop:hover::before { left: 130%; }
+#toTop.show:active { transform: scale(.86); transition-duration: .08s; }
+#toTop:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+ 
+/* ---- game viewer: games open on top of the menu ---- */
+#gameView {
+  position: fixed; inset: 0; z-index: 150;
+  background: var(--night);
+  opacity: 0; visibility: hidden;
+  transition: opacity .3s ease, visibility 0s .3s;
+}
+#gameView.open { opacity: 1; visibility: visible; transition: opacity .3s ease; }
+#gameView iframe { display: block; width: 100%; height: 100%; border: 0; }
+body.playing { overflow: hidden; }
+ 
+/* ---- Home button (top right, liquid glass). Only shows while a game is open.
+        right: 23px puts its center on the same line as the 42px arrow above (22 + 21 - 20) ---- */
+#homeBtn {
+  all: unset; box-sizing: border-box;
+  position: fixed; top: 20px; right: 23px; z-index: 200;
+  height: 40px; min-width: 40px; border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; cursor: pointer;
+  color: var(--text);
+  background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.34), rgba(255,255,255,.09) 55%, rgba(255,255,255,.04));
+  backdrop-filter: blur(14px) saturate(170%);
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -6px 12px rgba(255,255,255,.05), 0 8px 22px rgba(0,0,0,.35);
+  opacity: 0; pointer-events: none; transform: translateY(-12px) scale(.8);
+  transition: opacity .3s, transform .4s cubic-bezier(.3,1.7,.5,1), box-shadow .25s, border-color .25s;
+}
+#homeBtn .ic { position: relative; width: 38px; text-align: center; font-size: 18px; }
+#homeBtn .lb {                /* "Go Home" slides out on hover */
+  position: relative; max-width: 0; overflow: hidden; white-space: nowrap;
+  font: 600 .8rem 'DM Sans';
+  transition: max-width .35s ease, padding .35s ease;
+}
+#homeBtn:hover .lb { max-width: 90px; padding-right: 14px; }
+#homeBtn::before {            /* light sheen sweeping across on hover */
+  content: ""; position: absolute; top: 0; left: -80%;
+  width: 45%; height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(255,255,255,.45), transparent);
+  transform: skewX(-18deg);
+  transition: left .6s ease;
+}
+body.playing #homeBtn { opacity: 1; pointer-events: auto; transform: none; }
+body.playing #homeBtn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.38); }
+body.playing #homeBtn:active { transform: scale(.9); transition-duration: .08s; }
+#homeBtn:hover::before { left: 130%; }
+#homeBtn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+ 
+ 
+/* ==========================================================================
+   11. COLOR PALETTES  (Neon is the default, set in :root)
+   Chosen in Settings; saved as data-theme on <html>.
+   ========================================================================== */
+html[data-theme=black] {
+  --night:#0a0a0a; --plum:#161616; --card:#1d1d1f;
+  --line:rgba(255,255,255,.12); --text:#f2f2f2; --dim:#a1a1a6;
+  --orange:#ffffff; --pink:#b4b4ba; --mint:#e6e6e8;
+  --blob1:#4a4a50; --blob2:#2e2e33; --blob3:#55555c;
+  --side:rgba(10,10,10,.7); --panel:rgba(30,30,32,.55);
+  --glow:180,180,190; --on:#0a0a0a;
+}
+html[data-theme=blue] {
+  --night:#060b1a; --plum:#0e1830; --card:#14224a;
+  --line:rgba(160,190,255,.16); --text:#eef3ff; --dim:#9db0dc;
+  --orange:#9fd0ff; --pink:#4d7cff; --mint:#8fc0ff;
+  --blob1:#2b57ff; --blob2:#1a3a9c; --blob3:#3d8bff;
+  --side:rgba(6,11,26,.72); --panel:rgba(20,34,74,.55);
+  --glow:77,124,255; --on:#06102a;
+}
+html[data-theme=pink] {
+  --night:#14060f; --plum:#240f1d; --card:#341828;
+  --line:rgba(255,170,210,.16); --text:#fff0f7; --dim:#d9a9c2;
+  --orange:#ffc2dd; --pink:#ff4d94; --mint:#ffb3d4;
+  --blob1:#ff4d94; --blob2:#a02a68; --blob3:#ff8fb8;
+  --side:rgba(20,6,15,.72); --panel:rgba(52,24,40,.55);
+  --glow:255,77,148; --on:#2a0716;
+}
+ 
+ 
+/* ==========================================================================
+   12. SMALL SCREENS
+   ========================================================================== */
+@media (max-width: 820px) {
+  body { flex-direction: column; }
+  aside { position: static; height: auto; width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; border-right: 0; border-bottom: 1px solid var(--line); }
+  .nav { flex-direction: row; flex-wrap: wrap; margin: 0; }
+  .nav .sub { display: none; }
+  .acct { margin: 0 0 0 auto; border: 0; padding: 0; }
+}
+  </style>
 </head>
+ 
 <body>
-<div class="bg"><i></i><i></i><i></i></div>
  
-<aside>
-  <div class="logo">pulsixgames<small><span id="total"></span> games</small></div>
-  <nav class="nav">
-    <button class="on" data-view="all">Games</button>
-    <button data-view="favs">Favorites <span class="count" id="favCount"></span></button>
-    <button data-view="recent">Recently played</button>
-    <button id="random">🎲 Random game</button>
-    <div class="sub">More</div>
-    <a href="./proxy.html">Smart Proxy</a>
-    <button id="goLog">Changelog</button>
-    <button id="openSettings">Settings <span class="gear">⚙</span></button>
-  </nav>
-  <div class="acct" id="acct"></div>
-</aside>
+  <!-- background (glows + pulse are drawn with CSS) -->
+  <div class="bg"><i></i><i></i><i></i></div>
  
-<main>
-  <div class="top">
-    <div id="search"><input id="q" placeholder="Search games" autocomplete="off"><div id="pane"></div></div>
-  </div>
-  <h2 class="head" id="head">Games</h2>
-  <div class="chips" id="chips"></div>
-  <div id="recentRail" style="display:none"><div class="sec">Jump back in</div><div class="rail" id="rail"></div></div>
-  <div class="grid" id="grid"></div>
-  <p class="empty" id="empty" style="display:none"></p>
  
-  <div class="info" id="changelog">
-    <div class="panel" style="flex:1 1 340px;max-width:700px">
-      <h3>Changelog</h3>
-      <div id="log"></div>
-      <button class="btn ghost" id="more" style="display:inline-block;padding:9px 20px">Show more</button>
-      <button class="btn ghost" id="less" style="display:none;padding:9px 20px;margin-left:8px">Show less</button>
+  <!-- ======================= 3. SIDEBAR ======================= -->
+  <aside>
+    <div class="logo">pulsixgames<small><span id="total"></span> games</small></div>
+ 
+    <nav class="nav">
+      <button class="on" data-view="all">Games</button>
+      <button data-view="favs">Favorites <span class="count" id="favCount"></span></button>
+      <button data-view="recent">Recently played</button>
+      <button id="goLog">Changelog</button>
+ 
+      <div class="sub">More</div>
+      <button id="random">🎲 Random game</button>
+      <button id="openSettings">Settings <span class="gear">⚙</span></button>
+    </nav>
+ 
+    <!-- filled in by the script (log in button / profile) -->
+    <div class="acct" id="acct"></div>
+  </aside>
+ 
+ 
+  <!-- ========================= 4. MAIN ========================= -->
+  <main>
+ 
+    <!-- search -->
+    <div class="top">
+      <div id="search">
+        <input id="q" placeholder="Search games" autocomplete="off">
+        <div id="pane"></div>
+      </div>
     </div>
-    <div class="panel links" style="flex:0 1 300px;height:fit-content">
-      <h3>Other links</h3>
-      <a class="btn ghost" target="_blank" href="https://classroomhaas.github.io">Link 1</a>
-      <a class="btn ghost" target="_blank" href="https://zearnhaas.netlify.app/">Backup 1</a>
-      <a class="btn ghost" target="_blank" href="https://zearnhaas.github.io">Backup 3 (old)</a>
+ 
+    <h2 class="head" id="head">Games</h2>
+ 
+    <!-- filters -->
+    <small class="label">Filters</small>
+    <div class="chips" id="chips"></div>
+ 
+    <!-- recently played row -->
+    <div id="recentRail" style="display:none">
+      <div class="sec">Jump back in</div>
+      <div class="rail" id="rail"></div>
+    </div>
+ 
+    <!-- games (cards are built from the game list below) -->
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="empty" style="display:none"></p>
+ 
+    <!-- changelog + other links -->
+    <div class="info" id="changelog">
+      <div class="panel" style="flex:1 1 340px;max-width:700px">
+        <h3>Changelog</h3>
+        <div id="log"></div>
+        <button class="btn ghost" id="more" style="display:inline-block;padding:9px 20px">Show more</button>
+        <button class="btn ghost" id="less" style="display:none;padding:9px 20px;margin-left:8px">Show less</button>
+      </div>
+ 
+      <div class="panel links" style="flex:0 1 300px;height:fit-content">
+        <h3>Other links</h3>
+        <a class="btn ghost" target="_blank" href="https://classroomhaas.github.io">Link 1</a>
+        <a class="btn ghost" target="_blank" href="https://zearnhaas.netlify.app/">Backup 1</a>
+        <a class="btn ghost" target="_blank" href="https://zearnhaas.github.io">Backup 3 (old)</a>
+      </div>
+    </div>
+ 
+    <footer>
+      Welcome to the new site! Made with &lt;3 by NKC.<br>
+      <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSehIZWpUlPu8cv4Ew4hIhjYopDhIsQwGViUc1NYf9YrvBGecA/viewform?usp=dialog">Request a game or send feedback</a><br>
+    </footer>
+  </main>
+ 
+  <!-- back-to-top button (shows after scrolling down) -->
+  <button id="toTop" aria-label="Back to top"><span>↑</span></button>
+ 
+  <!-- game viewer: games open on top of the menu, and the Home button shows only while one is open -->
+  <div id="gameView"></div>
+  <button id="homeBtn" aria-label="Back to menu"><span class="ic">🏠&#xFE0E;</span><span class="lb">Go Home</span></button>
+ 
+ 
+  <!-- ======================= 5. MODALS ======================= -->
+ 
+  <!-- log in / sign up -->
+  <div class="modal" id="modal">
+    <div class="box">
+      <div id="mForm">
+        <h3 id="mTitle">Log in</h3>
+        <label for="mUser">Username</label>
+        <input id="mUser" autocomplete="username" maxlength="20">
+        <label for="mPass">Password</label>
+        <input id="mPass" type="password" autocomplete="current-password">
+        <div class="msg" id="mMsg"></div>
+        <button class="btn main" id="mGo">Log in</button>
+        <div class="swap">
+          <span id="mSwapText">New here?</span> <a id="mSwap">Create an account</a> · <a id="mClose">Close</a>
+        </div>
+      </div>
     </div>
   </div>
-  <footer>Welcome to the new site!<br>
-    <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSehIZWpUlPu8cv4Ew4hIhjYopDhIsQwGViUc1NYf9YrvBGecA/viewform?usp=dialog">Request a game or send feedback</a><br>
-  </footer>
-</main>
  
-<button id="toTop" aria-label="Back to top"><span>↑</span></button>
-<div class="modal" id="modal"><div class="box"><div id="mForm">
-  <h3 id="mTitle">Log in</h3>
-  <label for="mUser">Username</label><input id="mUser" autocomplete="username" maxlength="20">
-  <label for="mPass">Password</label><input id="mPass" type="password" autocomplete="current-password">
-  <div class="msg" id="mMsg"></div>
-  <button class="btn main" id="mGo">Log in</button>
-  <div class="swap"><span id="mSwapText">New here?</span> <a id="mSwap">Create an account</a> · <a id="mClose">Close</a></div>
-</div></div></div>
+  <!-- settings -->
+  <div class="modal" id="settings">
+    <div class="box sbox">
+      <h3>Settings</h3>
  
-<div class="modal" id="settings"><div class="box sbox">
-  <h3>Settings</h3>
-  <div class="set"><div class="sl"><b>Color palette</b><span>Change the look of the whole site.</span></div>
-    <div class="pals">
-      <button class="pal" data-t="black"><i style="background:linear-gradient(135deg,#fff,#4a4a50)"></i>Black</button>
-      <button class="pal" data-t="blue"><i style="background:linear-gradient(135deg,#9fd0ff,#2b57ff)"></i>Blue</button>
-      <button class="pal" data-t="pink"><i style="background:linear-gradient(135deg,#ffc2dd,#ff4d94)"></i>Pink</button>
-    </div></div>
-  <div class="set row"><div class="sl"><b>Background pulse</b><span>The soft beat that pulses behind the page.</span></div><button class="sw" role="switch" data-k="pulse" aria-label="Background pulse"></button></div>
-  <div class="set row"><div class="sl"><b>Moving glows</b><span>Slowly drifting light in the background.</span></div><button class="sw" role="switch" data-k="glow" aria-label="Moving glows"></button></div>
-  <div class="set row"><div class="sl"><b>Jump back in row</b><span>Show your recently played games on the home page.</span></div><button class="sw" role="switch" data-k="recent" aria-label="Jump back in row"></button></div>
-  <div style="display:flex;gap:10px;margin-top:20px"><button class="btn ghost" id="resetSet" style="flex:1">Reset</button><button class="btn main" id="closeSet" style="flex:1">Done</button></div>
-</div></div>
+      <div class="set">
+        <div class="sl"><b>Color palette</b><span>Change the look of the whole site.</span></div>
+        <div class="pals">
+          <button class="pal" data-t="neon"><i style="background:linear-gradient(135deg,#ff8a4c,#ff5fa2 55%,#6a4cff)"></i>Neon</button>
+          <button class="pal" data-t="black"><i style="background:linear-gradient(135deg,#fff,#4a4a50)"></i>Black</button>
+          <button class="pal" data-t="blue"><i style="background:linear-gradient(135deg,#9fd0ff,#2b57ff)"></i>Blue</button>
+          <button class="pal" data-t="pink"><i style="background:linear-gradient(135deg,#ffc2dd,#ff4d94)"></i>Pink</button>
+        </div>
+      </div>
  
-<!-- YOUR GAME LIST. Add a game by adding one line in this same format. -->
-<template id="games-source">
+      <div class="set row">
+        <div class="sl"><b>Background pulse</b><span>The soft beat that pulses behind the page.</span></div>
+        <button class="sw" role="switch" data-k="pulse" aria-label="Background pulse"></button>
+      </div>
+ 
+      <div class="set row">
+        <div class="sl"><b>Moving glows</b><span>Slowly drifting light in the background.</span></div>
+        <button class="sw" role="switch" data-k="glow" aria-label="Moving glows"></button>
+      </div>
+ 
+      <div class="set row">
+        <div class="sl"><b>Jump back in row</b><span>Show your recently played games on the home page.</span></div>
+        <button class="sw" role="switch" data-k="recent" aria-label="Jump back in row"></button>
+      </div>
+ 
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn ghost" id="resetSet" style="flex:1">Reset</button>
+        <button class="btn main" id="closeSet" style="flex:1">Done</button>
+      </div>
+    </div>
+  </div>
+ 
+ 
+  <!-- ===================== 6. GAME LIST =====================
+       YOUR GAMES. To add a game, copy one line below and change it.
+         href           = where the game lives
+         data-name      = what search matches
+         data-category  = filter words (action, platformer, shooter, driving,
+                          sports, puzzle, strategy, simulation, horror)
+                          Leave data-category off for link tiles like TikTok.
+         img src / alt  = the picture in ./siteimages/gamelogos/
+         game-name      = the title shown on the card
+       ======================================================== -->
+  <template id="games-source">
     <a href="./games/bitlife/" class="game-link"><div class="game-card" data-name="bitlife" data-category="simulation strategy"><div class="game-image"><img src="./siteimages/gamelogos/bitlife.jpeg" alt="Bitlife" /></div><div class="game-name">Bitlife</div></div></a>
     <a href="./games/2048/" class="game-link"><div class="game-card" data-name="2048" data-category="puzzle strategy"><div class="game-image"><img src="./siteimages/gamelogos/2048.png" alt="2048" /></div><div class="game-name">2048</div></div></a>
     <a href="./games/2minutefootball/" class="game-link"><div class="game-card" data-name="2 minute football" data-category="sports"><div class="game-image"><img src="./siteimages/gamelogos/2minutefootball.png" alt="2 Minute Football" /></div><div class="game-name">2 Minute Football</div></div></a>
@@ -349,202 +862,638 @@ body{transition:background .5s,color .5s}.bg i{transition:background .8s}
     <a href="./games/yohoho/" class="game-link"><div class="game-card" data-name="yohoho.io" data-category="action"><div class="game-image"><img src="./siteimages/gamelogos/yohoho.png" alt="Yohoho.io" /></div><div class="game-name">Yohoho.io</div></div></a>
     <a href="./tiktok.html" class="game-link"><div class="game-card" data-name="Tiktok"><div class="game-image"><img src="./siteimages/gamelogos/tiktok.png" alt="Tiktok" /></div><div class="game-name">🌐 Tiktok 🌐</div></div></a>
     <a href="./youtube.html" class="game-link"><div class="game-card" data-name="youtube"><div class="game-image"><img src="./siteimages/gamelogos/youtube.png" alt="YouTube" /></div><div class="game-name">🌐 YouTube 🌐</div></div></a>
-</template>
+  </template>
  
-<script>
-// Games are read from the <template id="games-source"> list above (your original format)
-const gameId=h=>{const p=h.replace(/^\.\//,'').split('/');return p[0]==='games'?p[1]:p[p.length-1].replace(/\.html$/,'')};
-const G=[...document.getElementById('games-source').content.querySelectorAll('.game-link')].map(a=>{
-  const c=a.querySelector('.game-card'),href=a.getAttribute('href');
-  return{id:gameId(href),name:c.querySelector('.game-name').textContent.trim(),dn:(c.dataset.name||'').toLowerCase(),img:a.querySelector('img').getAttribute('src'),cats:c.dataset.category||'',href,web:!c.dataset.category};
+  <!-- ======================= 7. SCRIPT ======================= -->
+  <script>
+/* ==========================================================================
+   TABLE OF CONTENTS
+   1. Game list (read from the <template> above)
+   2. Constants: filters, changelog, Firebase config
+   3. Helpers + shared state
+   4. Settings (palette + switches)
+   5. Accounts (storage, sign up / log in, account UI)
+   6. Games (cards, sorting animation, recently played, search)
+   7. Page events (game viewer, clicks, random, changelog, back-to-top)
+   8. Start
+   ========================================================================== */
+ 
+ 
+/* ==========================================================================
+   1. GAME LIST
+   ========================================================================== */
+// "./games/bitlife/" -> "bitlife",  "./construct/throwapotato.html" -> "throwapotato"
+const gameId = href => {
+  const parts = href.replace(/^\.\//, '').split('/');
+  return parts[0] === 'games' ? parts[1] : parts[parts.length - 1].replace(/\.html$/, '');
+};
+ 
+const G = [...document.getElementById('games-source').content.querySelectorAll('.game-link')].map(a => {
+  const card = a.querySelector('.game-card');
+  const href = a.getAttribute('href');
+  return {
+    id:   gameId(href),
+    name: card.querySelector('.game-name').textContent.trim(),
+    dn:   (card.dataset.name || '').toLowerCase(),
+    img:  a.querySelector('img').getAttribute('src'),
+    cats: card.dataset.category || '',
+    href,
+    web:  !card.dataset.category      // link tiles (TikTok, YouTube) are left out of "Random game"
+  };
 });
-const CATS=['all','action','platformer','shooter','driving','sports','puzzle','strategy','simulation','horror'];
-const LOG=[["Version 1.305 — November 5, 2026","New look, plus accounts: save favorites and recently played."],["Version 1.304 — November 4, 2026","Tweaked the site a little bit ;)"],["Version 1.303 — October 23, 2026","Added 1 game:<br>- Imposter (Made by us!)"],["Version 1.302 — October 10, 2026","Added 3 games:<br>- Brawlverse (Made by us!)<br>- Paintball Arena (Also made by us!)<br>- Spray Roulette (Once again, made by us!)"],["Version 1.301 — August 14, 2026","Added 5 games:<br>- Ducklife<br>- Ducklife 2<br>- Ducklife 3<br>- Ducklife 4<br>- Hole.io"],["Version 1.3 — August 13, 2026","Redesigned the site :)"],["Version 1.216 — March 24, 2026","Added 2 games:<br>- 2 Minute Football<br>- Slither.io"],["Version 1.215 — February 3, 2026","Added Filters"]];
  
-/* ===== Firebase (optional) =====
-   Paste your web-app config from Firebase console > Project settings > Your apps.
-   Leave apiKey empty and the site falls back to browser-only accounts. */
-const FIREBASE_CONFIG={apiKey:"",authDomain:"",projectId:"",appId:""};
-const CLOUD=!!FIREBASE_CONFIG.apiKey, FB_VER='10.14.1';
  
-const $=s=>document.querySelector(s), esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
-const COLORS=['#e6e6e8','#ffffff','#b4b4ba','#9a9aa0','#cfcfd3'];
-let view='all',cat='all',mode='login',fb=null,busy=false,S={user:null,color:COLORS[0],favs:[],recent:[]};
-const swap=(el,fn)=>{el.style.transition='opacity .15s';el.style.opacity=0;setTimeout(()=>{fn();el.style.opacity=1},150)};
+/* ==========================================================================
+   2. CONSTANTS
+   ========================================================================== */
+const CATS = ['all', 'action', 'platformer', 'shooter', 'driving', 'sports', 'puzzle', 'strategy', 'simulation', 'horror'];
  
-/* ---------- state + accounts ---------- */
-function loadGuest(){const g=store.get('bbg_guest',{favs:[],recent:[]});S={user:null,color:COLORS[0],favs:g.favs||[],recent:g.recent||[]}}
-function persist(){
-  if(!S.user){store.set('bbg_guest',{favs:S.favs,recent:S.recent});return}
-  const d={name:S.user,color:S.color,favs:S.favs,recent:S.recent};
-  if(CLOUD&&fb&&fb.auth.currentUser)fb.F.setDoc(fb.F.doc(fb.db,'users',fb.auth.currentUser.uid),d,{merge:true}).catch(console.error);
-  else{const u=store.get('bbg_users',{}),k=S.user.toLowerCase();if(u[k]){Object.assign(u[k],d);store.set('bbg_users',u)}}
+// Changelog, newest first
+const LOG = [
+  ["Version 1.306 — November 5, 2026", "Smoother animations, press effects on buttons, a back-to-top button, and optional accounts."],
+  ["Version 1.305 — November 5, 2026", "New look, plus accounts: save favorites and recently played."],
+  ["Version 1.304 — November 4, 2026", "Tweaked the site a little bit ;)"],
+  ["Version 1.303 — October 23, 2026", "Added 1 game:<br>- Imposter (Made by us!)"],
+  ["Version 1.302 — October 10, 2026", "Added 3 games:<br>- Brawlverse (Made by us!)<br>- Paintball Arena (Also made by us!)<br>- Spray Roulette (Once again, made by us!)"],
+  ["Version 1.301 — August 14, 2026", "Added 5 games:<br>- Ducklife<br>- Ducklife 2<br>- Ducklife 3<br>- Ducklife 4<br>- Hole.io"],
+  ["Version 1.3 — August 13, 2026", "Redesigned the site :)"],
+  ["Version 1.216 — March 24, 2026", "Added 2 games:<br>- 2 Minute Football<br>- Slither.io"],
+  ["Version 1.215 — February 3, 2026", "Added Filters"]
+];
+ 
+/* Firebase (optional): paste your web-app config from
+   Firebase console > Project settings > Your apps.
+   Leave apiKey empty and accounts are stored in this browser only. */
+const FIREBASE_CONFIG = { apiKey: "", authDomain: "", projectId: "", appId: "" };
+const CLOUD   = !!FIREBASE_CONFIG.apiKey;
+const FB_VER  = '10.14.1';
+ 
+ 
+/* ==========================================================================
+   3. HELPERS + SHARED STATE
+   ========================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+ 
+// localStorage that never throws
+const store = {
+  get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+ 
+// fade an element out, run fn (change its content), fade back in
+const swap = (el, fn) => {
+  el.style.transition = 'opacity .15s';
+  el.style.opacity = 0;
+  setTimeout(() => { fn(); el.style.opacity = 1; }, 150);
+};
+ 
+const COLORS = ['#e6e6e8', '#ffffff', '#b4b4ba', '#9a9aa0', '#cfcfd3'];   // profile circle colors
+ 
+let view = 'all';      // 'all' | 'favs' | 'recent'
+let cat  = 'all';      // current filter
+let mode = 'login';    // 'login' | 'signup'
+let fb   = null;       // Firebase handles, once loaded
+let busy = false;      // true while signing up with Firebase
+let S    = { user: null, color: COLORS[0], favs: [], recent: [] };   // current person's data
+ 
+ 
+/* ==========================================================================
+   4. SETTINGS
+   ========================================================================== */
+const DEF = { theme: 'neon', pulse: true, glow: true, recent: true };
+let ST = { ...DEF, ...store.get('bbg_settings', {}) };
+ 
+function applySettings() {
+  const root = document.documentElement;
+  root.dataset.theme = ST.theme;
+  root.classList.toggle('no-pulse',  !ST.pulse);
+  root.classList.toggle('no-glow',   !ST.glow);
+  root.classList.toggle('no-recent', !ST.recent);
+ 
+  document.querySelectorAll('.pal').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === ST.theme));
+  document.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-checked', !!ST[b.dataset.k]));
+  store.set('bbg_settings', ST);
 }
-const mail=n=>n.toLowerCase()+'@bbg-users.app'; // Firebase needs an email; this one is never mailed
-async function hash(u,p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('bbg:'+u.toLowerCase()+':'+p));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-async function signup(name,pass){
-  const g={favs:S.favs,recent:S.recent},color=COLORS[Math.floor(Math.random()*COLORS.length)];
-  if(CLOUD){
-    busy=true;
-    try{const c=await fb.A.createUserWithEmailAndPassword(fb.auth,mail(name),pass);
-      await fb.F.setDoc(fb.F.doc(fb.db,'users',c.user.uid),{name,color,...g});
-      S={user:name,color,...g}}
-    finally{busy=false}
-  }else{
-    const u=store.get('bbg_users',{});if(u[name.toLowerCase()])throw{code:'taken'};
-    u[name.toLowerCase()]={name,h:await hash(name,pass),color,...g};store.set('bbg_users',u);store.set('bbg_session',name);S={user:name,color,...g};
+ 
+const openSettings  = () => $('#settings').classList.add('open');
+const closeSettings = () => $('#settings').classList.remove('open');
+ 
+document.querySelectorAll('.pal').forEach(b => b.onclick = () => { ST.theme = b.dataset.t; applySettings(); });
+document.querySelectorAll('.sw').forEach(b => b.onclick = () => { ST[b.dataset.k] = !ST[b.dataset.k]; applySettings(); });
+$('#resetSet').onclick     = () => { ST = { ...DEF }; applySettings(); };
+$('#openSettings').onclick = openSettings;
+$('#closeSet').onclick     = closeSettings;
+$('#settings').onclick     = e => { if (e.target.id === 'settings') closeSettings(); };
+ 
+ 
+/* ==========================================================================
+   5. ACCOUNTS
+   ========================================================================== */
+ 
+/* ---- saving the current person's data ---- */
+function loadGuest() {
+  const g = store.get('bbg_guest', { favs: [], recent: [] });
+  S = { user: null, color: COLORS[0], favs: g.favs || [], recent: g.recent || [] };
+}
+ 
+function persist() {
+  if (!S.user) { store.set('bbg_guest', { favs: S.favs, recent: S.recent }); return; }
+ 
+  const d = { name: S.user, color: S.color, favs: S.favs, recent: S.recent };
+  if (CLOUD && fb && fb.auth.currentUser) {
+    fb.F.setDoc(fb.F.doc(fb.db, 'users', fb.auth.currentUser.uid), d, { merge: true }).catch(console.error);
+  } else {
+    const users = store.get('bbg_users', {});
+    const key = S.user.toLowerCase();
+    if (users[key]) { Object.assign(users[key], d); store.set('bbg_users', users); }
   }
 }
-async function login(name,pass){
-  if(CLOUD)return fb.A.signInWithEmailAndPassword(fb.auth,mail(name),pass); // auth listener loads the profile
-  const r=store.get('bbg_users',{})[name.toLowerCase()];
-  if(!r||r.h!==await hash(name,pass))throw{code:'bad'};
-  store.set('bbg_session',r.name);S={user:r.name,color:r.color,favs:r.favs||[],recent:r.recent||[]};
+ 
+/* ---- sign up / log in / log out ---- */
+const mail = n => n.toLowerCase() + '@bbg-users.app';   // Firebase needs an email; this one is never mailed
+ 
+async function hash(user, pass) {
+  const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('bbg:' + user.toLowerCase() + ':' + pass));
+  return [...new Uint8Array(bytes)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
-async function logout(){try{if(CLOUD&&fb)await fb.A.signOut(fb.auth);else store.set('bbg_session',null)}catch(e){console.error(e)}loadGuest();refresh()}
-async function boot(){
-  try{
-    if(CLOUD){
-      const v=`https://www.gstatic.com/firebasejs/${FB_VER}/`;
-      const [{initializeApp},A,F]=await Promise.all([import(v+'firebase-app.js'),import(v+'firebase-auth.js'),import(v+'firebase-firestore.js')]);
-      const app=initializeApp(FIREBASE_CONFIG);fb={auth:A.getAuth(app),db:F.getFirestore(app),A,F};
-      A.onAuthStateChanged(fb.auth,async u=>{
-        if(busy)return;
-        if(!u)loadGuest();
-        else{const s=await F.getDoc(F.doc(fb.db,'users',u.uid));
-          const d=s.exists()?s.data():{name:u.email.split('@')[0],color:COLORS[0],favs:S.favs,recent:S.recent};
-          S={user:d.name,color:d.color,favs:d.favs||[],recent:d.recent||[]}}
+ 
+async function signup(name, pass) {
+  const g = { favs: S.favs, recent: S.recent };   // keep what the guest already saved
+  const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+ 
+  if (CLOUD) {
+    busy = true;
+    try {
+      const c = await fb.A.createUserWithEmailAndPassword(fb.auth, mail(name), pass);
+      await fb.F.setDoc(fb.F.doc(fb.db, 'users', c.user.uid), { name, color, ...g });
+      S = { user: name, color, ...g };
+    } finally { busy = false; }
+  } else {
+    const users = store.get('bbg_users', {});
+    if (users[name.toLowerCase()]) throw { code: 'taken' };
+    users[name.toLowerCase()] = { name, h: await hash(name, pass), color, ...g };
+    store.set('bbg_users', users);
+    store.set('bbg_session', name);
+    S = { user: name, color, ...g };
+  }
+}
+ 
+async function login(name, pass) {
+  if (CLOUD) return fb.A.signInWithEmailAndPassword(fb.auth, mail(name), pass);   // the auth listener loads the profile
+ 
+  const r = store.get('bbg_users', {})[name.toLowerCase()];
+  if (!r || r.h !== await hash(name, pass)) throw { code: 'bad' };
+  store.set('bbg_session', r.name);
+  S = { user: r.name, color: r.color, favs: r.favs || [], recent: r.recent || [] };
+}
+ 
+async function logout() {
+  try {
+    if (CLOUD && fb) await fb.A.signOut(fb.auth);
+    else store.set('bbg_session', null);
+  } catch (e) { console.error(e); }
+  loadGuest();
+  refresh();
+}
+ 
+/* ---- loads Firebase (if configured) and restores a saved login ---- */
+async function boot() {
+  try {
+    if (CLOUD) {
+      const base = `https://www.gstatic.com/firebasejs/${FB_VER}/`;
+      const [{ initializeApp }, A, F] = await Promise.all([
+        import(base + 'firebase-app.js'),
+        import(base + 'firebase-auth.js'),
+        import(base + 'firebase-firestore.js')
+      ]);
+      const app = initializeApp(FIREBASE_CONFIG);
+      fb = { auth: A.getAuth(app), db: F.getFirestore(app), A, F };
+ 
+      A.onAuthStateChanged(fb.auth, async u => {
+        if (busy) return;
+        if (!u) {
+          loadGuest();
+        } else {
+          const snap = await F.getDoc(F.doc(fb.db, 'users', u.uid));
+          const d = snap.exists() ? snap.data() : { name: u.email.split('@')[0], color: COLORS[0], favs: S.favs, recent: S.recent };
+          S = { user: d.name, color: d.color, favs: d.favs || [], recent: d.recent || [] };
+        }
         refresh();
       });
-    }else{
-      const n=store.get('bbg_session',null),r=n&&store.get('bbg_users',{})[n.toLowerCase()];
-      if(r){S={user:r.name,color:r.color,favs:r.favs||[],recent:r.recent||[]};refresh()}
+    } else {
+      const name = store.get('bbg_session', null);
+      const r = name && store.get('bbg_users', {})[name.toLowerCase()];
+      if (r) { S = { user: r.name, color: r.color, favs: r.favs || [], recent: r.recent || [] }; refresh(); }
     }
-  }catch(e){console.error('Account backend failed to load',e)}
+  } catch (e) { console.error('Account backend failed to load', e); }
 }
  
-/* ---------- account UI ---------- */
-function renderAcct(anim){
-  const el=$('#acct'),fill=()=>{
-    if(S.user){el.innerHTML=`<div class="me"><div class="av" style="background:${S.color}">${esc(S.user[0].toUpperCase())}</div>${esc(S.user)}</div><button class="btn ghost" id="out" style="width:100%;margin-top:10px">Log out</button>`;$('#out').onclick=logout}
-    else{el.innerHTML=`<button class="btn main" id="inBtn">Log in / Sign up</button><p style="font-size:.78rem;margin-top:8px">${CLOUD?'Accounts sync your favorites across devices.':'Accounts save favorites on this device.'}</p>`;$('#inBtn').onclick=()=>openModal('login')}
-  };anim?swap(el,fill):fill();
+/* ---- account area in the sidebar ---- */
+function renderAcct(animate) {
+  const el = $('#acct');
+  const fill = () => {
+    if (S.user) {
+      el.innerHTML =
+        `<div class="me"><div class="av" style="background:${S.color}">${esc(S.user[0].toUpperCase())}</div>${esc(S.user)}</div>` +
+        `<button class="btn ghost" id="out" style="width:100%;margin-top:10px">Log out</button>`;
+      $('#out').onclick = logout;
+    } else {
+      el.innerHTML =
+        `<button class="btn main" id="inBtn">Log in / Sign up</button>` +
+        `<p style="font-size:.78rem;margin-top:8px">${CLOUD ? 'Accounts sync your favorites across devices.' : 'Accounts save favorites on this device.'}</p>`;
+      $('#inBtn').onclick = () => openModal('login');
+    }
+  };
+  animate ? swap(el, fill) : fill();
 }
-function setMode(m,anim){mode=m;const s=m==='signup',f=()=>{$('#mTitle').textContent=s?'Create account':'Log in';$('#mGo').textContent=s?'Sign up':'Log in';$('#mSwapText').textContent=s?'Have an account?':'New here?';$('#mSwap').textContent=s?'Log in':'Create an account';$('#mMsg').textContent=''};anim?swap($('#mForm'),f):f()}
-function openModal(m){setMode(m);$('#modal').classList.add('open');setTimeout(()=>$('#mUser').focus(),200)}
-const closeModal=()=>$('#modal').classList.remove('open');
-$('#mSwap').onclick=()=>setMode(mode==='login'?'signup':'login',true);
-$('#mClose').onclick=closeModal;
-$('#modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
-const ERR={taken:'That username is taken. Try another or log in.','auth/email-already-in-use':'That username is taken. Try another or log in.',bad:'Wrong username or password.','auth/invalid-credential':'Wrong username or password.','auth/user-not-found':'Wrong username or password.','auth/wrong-password':'Wrong username or password.','auth/weak-password':'Password must be at least 6 characters.','auth/too-many-requests':'Too many tries. Wait a minute and try again.','auth/network-request-failed':'Network error. Check your connection.'};
-async function submit(){
-  const name=$('#mUser').value.trim(),pass=$('#mPass').value,msg=$('#mMsg'),go=$('#mGo');
-  if(!/^[A-Za-z0-9_]{3,20}$/.test(name))return msg.textContent='Username: 3–20 letters, numbers or underscores.';
-  if(pass.length<6)return msg.textContent='Password must be at least 6 characters.';
-  if(CLOUD&&!fb)return msg.textContent='Still connecting. Try again in a moment.';
-  go.disabled=true;msg.textContent='';
-  try{mode==='signup'?await signup(name,pass):await login(name,pass);$('#mPass').value='';closeModal();refresh()}
-  catch(e){msg.textContent=ERR[e.code]||'Something went wrong. Try again.'}
-  finally{go.disabled=false}
-}
-$('#mGo').onclick=submit;$('#mPass').onkeydown=e=>{if(e.key==='Enter')submit()};
  
-/* ---------- games: cards built once, then sorted with FLIP animation ---------- */
-const els={};
-G.forEach(g=>{const c=document.createElement('div');c.className='card';c.dataset.id=g.id;
-  c.innerHTML=`<a href="${g.href}" data-id="${g.id}"><img loading="lazy" src="${g.img}" alt=""><b>${esc(g.name)}</b></a><button class="fav" data-f="${g.id}" aria-label="Favorite ${esc(g.name)}">♡</button>`;els[g.id]=c});
-$('#chips').innerHTML=CATS.map(c=>`<button class="chip${c==='all'?' on':''}" data-c="${c}">${c[0].toUpperCase()+c.slice(1)}</button>`).join('');
-const grid=$('#grid');let token=0;
-function list(){let a=G;
-  if(view==='favs')a=a.filter(g=>S.favs.includes(g.id));
-  if(view==='recent')a=S.recent.map(id=>G.find(g=>g.id===id)).filter(Boolean);
-  if(cat!=='all')a=a.filter(g=>g.cats.includes(cat));return a}
-function layout(a){
-  const t=++token,keep=new Set(a.map(g=>g.id)),h0=grid.offsetHeight,gr=grid.getBoundingClientRect();
-  const kids=[...grid.children],first=new Map(kids.map(c=>[c.dataset.id,c.getBoundingClientRect()]));
-  // cards that no longer match leave the layout flow right away and fade out in place, so nothing snaps
-  kids.forEach(c=>{if(keep.has(c.dataset.id)||c._lv)return;const r=first.get(c.dataset.id);c._lv=1;
-    Object.assign(c.style,{position:'absolute',left:r.left-gr.left+'px',top:r.top-gr.top+'px',width:r.width+'px',height:r.height+'px',margin:'0',zIndex:'0',pointerEvents:'none',transition:'opacity .3s ease,transform .3s ease',opacity:'0',transform:'scale(.85)'});
-    c._t=setTimeout(()=>{if(c._lv){c._lv=0;c.remove()}},330)});
-  const RESET={position:'',left:'',top:'',width:'',height:'',margin:'',zIndex:'',pointerEvents:'',transition:'none',transform:''};
-  a.forEach(g=>{const c=els[g.id];c._lv=0;clearTimeout(c._t);Object.assign(c.style,RESET);grid.appendChild(c)});
-  grid.style.transition='none';grid.style.minHeight='';const h1=grid.offsetHeight;grid.style.minHeight=h0+'px';
-  let k=0;
-  a.forEach(g=>{const c=els[g.id],f=first.get(g.id);
-    if(f){const l=c.getBoundingClientRect();c.style.opacity=1;c.style.transform=`translate(${f.left-l.left}px,${f.top-l.top}px)`;c._in=0}
-    else{c.style.opacity=0;c.style.transform='scale(.85)';c._in=++k}});
-  void grid.offsetWidth;
-  grid.style.transition='min-height .55s cubic-bezier(.2,.9,.25,1)';grid.style.minHeight=h1+'px';
-  a.forEach(g=>{const c=els[g.id],d=c._in?80+Math.min((c._in-1)*12,240):0;
-    c.style.transition=`transform .55s cubic-bezier(.2,.9,.25,1) ${d}ms,opacity .4s ease ${d}ms`;c.style.transform='';c.style.opacity=1});
-  setTimeout(()=>{if(t!==token)return;grid.style.minHeight='';grid.style.transition='';a.forEach(g=>{const s=els[g.id].style;s.transition='';s.transform='';s.opacity=''})},1000);
+/* ---- log in / sign up window ---- */
+function setMode(m, animate) {
+  mode = m;
+  const signupMode = m === 'signup';
+  const apply = () => {
+    $('#mTitle').textContent    = signupMode ? 'Create account' : 'Log in';
+    $('#mGo').textContent       = signupMode ? 'Sign up' : 'Log in';
+    $('#mSwapText').textContent = signupMode ? 'Have an account?' : 'New here?';
+    $('#mSwap').textContent     = signupMode ? 'Log in' : 'Create an account';
+    $('#mMsg').textContent      = '';
+  };
+  animate ? swap($('#mForm'), apply) : apply();
 }
-function syncHearts(){G.forEach(g=>{const b=els[g.id].querySelector('.fav'),on=S.favs.includes(g.id);b.classList.toggle('on',on);b.textContent=on?'♥':'♡'})}
-function renderRail(){
-  const rec=S.recent.map(id=>G.find(g=>g.id===id)).filter(Boolean).slice(0,10),w=$('#recentRail'),was=w.style.display==='block',show=view==='all'&&rec.length>0;
-  $('#rail').innerHTML=rec.map(g=>`<a href="${g.href}" data-id="${g.id}"><img src="${g.img}" alt="">${esc(g.name)}</a>`).join('');
-  w.style.display=show?'block':'none';
-  if(show&&!was){w.classList.remove('in');void w.offsetWidth;w.classList.add('in')}
-}
-function update(){
-  const a=list(),t={all:'Games',favs:'Favorites',recent:'Recently played'}[view],h=$('#head');
-  $('#total').textContent=G.filter(g=>!g.web).length;
-  $('#favCount').textContent=S.favs.length||'';
-  if(h.textContent!==t)swap(h,()=>h.textContent=t);
-  document.querySelectorAll('.nav [data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===view));
-  renderRail();layout(a);
-  const e=$('#empty'),m=a.length?'':({favs:'No favorites yet. Tap the heart on any game to save it here.',recent:'Games you play will show up here.'}[view]||'No games in this category.');
-  if(m){e.textContent=m;e.style.display='block';e.classList.remove('in');void e.offsetWidth;e.classList.add('in')}else e.style.display='none';
-}
-function refresh(){syncHearts();renderAcct(true);update()}
  
-document.addEventListener('click',e=>{
-  const c=e.target.closest('.chip');if(c){cat=c.dataset.c;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));return update()}
-  const n=e.target.closest('.nav [data-view]');if(n){view=n.dataset.view;return update()}
-  const f=e.target.closest('.fav');if(f){
-    const id=f.dataset.f,i=S.favs.indexOf(id);i<0?S.favs.push(id):S.favs.splice(i,1);persist();
-    const on=i<0;f.classList.toggle('on',on);f.textContent=on?'♥':'♡';f.classList.remove('pop');void f.offsetWidth;f.classList.add('pop');
-    $('#favCount').textContent=S.favs.length||'';if(view==='favs')update();return}
-  const l=e.target.closest('a[data-id]');if(l){S.recent=[l.dataset.id,...S.recent.filter(x=>x!==l.dataset.id)].slice(0,20);persist()}
-  if(!e.target.closest('#search'))$('#pane').classList.remove('open');
+function openModal(m) {
+  setMode(m);
+  $('#modal').classList.add('open');
+  setTimeout(() => $('#mUser').focus(), 200);
+}
+const closeModal = () => $('#modal').classList.remove('open');
+ 
+const ERR = {
+  taken: 'That username is taken. Try another or log in.',
+  'auth/email-already-in-use': 'That username is taken. Try another or log in.',
+  bad: 'Wrong username or password.',
+  'auth/invalid-credential': 'Wrong username or password.',
+  'auth/user-not-found': 'Wrong username or password.',
+  'auth/wrong-password': 'Wrong username or password.',
+  'auth/weak-password': 'Password must be at least 6 characters.',
+  'auth/too-many-requests': 'Too many tries. Wait a minute and try again.',
+  'auth/network-request-failed': 'Network error. Check your connection.'
+};
+ 
+async function submit() {
+  const name = $('#mUser').value.trim();
+  const pass = $('#mPass').value;
+  const msg = $('#mMsg');
+  const go = $('#mGo');
+ 
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(name)) return msg.textContent = 'Username: 3–20 letters, numbers or underscores.';
+  if (pass.length < 6)                      return msg.textContent = 'Password must be at least 6 characters.';
+  if (CLOUD && !fb)                         return msg.textContent = 'Still connecting. Try again in a moment.';
+ 
+  go.disabled = true;
+  msg.textContent = '';
+  try {
+    mode === 'signup' ? await signup(name, pass) : await login(name, pass);
+    $('#mPass').value = '';
+    closeModal();
+    refresh();
+  } catch (e) {
+    msg.textContent = ERR[e.code] || 'Something went wrong. Try again.';
+  } finally {
+    go.disabled = false;
+  }
+}
+ 
+$('#mSwap').onclick  = () => setMode(mode === 'login' ? 'signup' : 'login', true);
+$('#mClose').onclick = closeModal;
+$('#modal').onclick  = e => { if (e.target.id === 'modal') closeModal(); };
+$('#mGo').onclick    = submit;
+$('#mPass').onkeydown = e => { if (e.key === 'Enter') submit(); };
+ 
+ 
+/* ==========================================================================
+   6. GAMES
+   ========================================================================== */
+ 
+/* ---- cards are built once, then shown / hidden / sorted ---- */
+const els = {};   // game id -> card element
+G.forEach(g => {
+  const c = document.createElement('div');
+  c.className = 'card';
+  c.dataset.id = g.id;
+  c.innerHTML =
+    `<a href="${g.href}" data-id="${g.id}"><img loading="lazy" src="${g.img}" alt=""><b>${esc(g.name)}</b></a>` +
+    `<button class="fav" data-f="${g.id}" aria-label="Favorite ${esc(g.name)}">♡</button>`;
+  els[g.id] = c;
 });
  
-/* ---------- search, random, changelog, to-top ---------- */
-$('#q').oninput=()=>{const q=$('#q').value.trim().toLowerCase(),p=$('#pane');
-  if(!q)return p.classList.remove('open');
-  const r=G.filter(g=>g.name.toLowerCase().includes(q)||g.id.includes(q)||g.dn.includes(q));
-  p.innerHTML=r.map(g=>`<a href="${g.href}" data-id="${g.id}"><img src="${g.img}" alt=""><span>${g.id==='wbwwb'?'WBWWB':esc(g.name)}</span></a>`).join('')||'<div class="empty" style="padding:12px">No matches</div>';
-  p.classList.add('open')};
-$('#random').onclick=()=>{const a=G.filter(g=>!g.web);location.href=a[Math.floor(Math.random()*a.length)].href};
-$('#goLog').onclick=()=>$('#changelog').scrollIntoView({behavior:'smooth'});
-let shown=1;
-function drawLog(){$('#log').innerHTML=LOG.slice(0,shown).map(([t,b],i)=>`<div class="entry"${i===shown-1&&shown>1?' style="animation:rise .45s ease both"':''}><h4>${t}</h4><p>${b}</p></div>`).join('');$('#more').disabled=shown>=LOG.length;$('#less').style.display=shown>1?'inline-block':'none'}
-$('#more').onclick=()=>{shown++;drawLog()};$('#less').onclick=()=>{shown--;drawLog()};
-const tt=$('#toTop');addEventListener('scroll',()=>tt.classList.toggle('show',scrollY>500),{passive:true});
-tt.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+$('#chips').innerHTML = CATS.map(c =>
+  `<button class="chip${c === 'all' ? ' on' : ''}" data-c="${c}">${c[0].toUpperCase() + c.slice(1)}</button>`
+).join('');
  
-/* ---------- settings ---------- */
-const DEF={theme:'black',pulse:true,glow:true,recent:true};
-let ST={...DEF,...store.get('bbg_settings',{})};
-function applySettings(){const r=document.documentElement;
-  r.dataset.theme=ST.theme;r.classList.toggle('no-pulse',!ST.pulse);r.classList.toggle('no-glow',!ST.glow);r.classList.toggle('no-recent',!ST.recent);
-  document.querySelectorAll('.pal').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===ST.theme));
-  document.querySelectorAll('.sw').forEach(b=>b.setAttribute('aria-checked',!!ST[b.dataset.k]));
-  store.set('bbg_settings',ST)}
-document.querySelectorAll('.pal').forEach(b=>b.onclick=()=>{ST.theme=b.dataset.t;applySettings()});
-document.querySelectorAll('.sw').forEach(b=>b.onclick=()=>{ST[b.dataset.k]=!ST[b.dataset.k];applySettings()});
-$('#resetSet').onclick=()=>{ST={...DEF};applySettings()};
-const closeSet=()=>$('#settings').classList.remove('open');
-$('#openSettings').onclick=()=>$('#settings').classList.add('open');
-$('#closeSet').onclick=closeSet;
-$('#settings').onclick=e=>{if(e.target.id==='settings')closeSet()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSet()});
+const grid = $('#grid');
+let token = 0;   // lets a newer sort cancel an older one
+ 
+// which games should be showing right now
+function list() {
+  let a = G;
+  if (view === 'favs')   a = a.filter(g => S.favs.includes(g.id));
+  if (view === 'recent') a = S.recent.map(id => G.find(g => g.id === id)).filter(Boolean);
+  if (cat !== 'all')     a = a.filter(g => g.cats.includes(cat));
+  return a;
+}
+ 
+/* ---- sorting animation (FLIP): cards that leave fade out in place,
+        cards that stay slide to their new spot, new cards scale in ---- */
+function layout(a) {
+  const t = ++token;
+  const keep = new Set(a.map(g => g.id));
+  const h0 = grid.offsetHeight;
+  const gr = grid.getBoundingClientRect();
+  const kids = [...grid.children];
+  const first = new Map(kids.map(c => [c.dataset.id, c.getBoundingClientRect()]));
+ 
+  // 1) cards that no longer match: take out of the layout and fade away where they are
+  kids.forEach(c => {
+    if (keep.has(c.dataset.id) || c._lv) return;
+    const r = first.get(c.dataset.id);
+    c._lv = 1;
+    Object.assign(c.style, {
+      position: 'absolute', left: r.left - gr.left + 'px', top: r.top - gr.top + 'px',
+      width: r.width + 'px', height: r.height + 'px', margin: '0', zIndex: '0', pointerEvents: 'none',
+      transition: 'opacity .3s ease,transform .3s ease', opacity: '0', transform: 'scale(.85)'
+    });
+    c._t = setTimeout(() => { if (c._lv) { c._lv = 0; c.remove(); } }, 330);
+  });
+ 
+  // 2) put the matching cards in their new order
+  const RESET = { position: '', left: '', top: '', width: '', height: '', margin: '', zIndex: '', pointerEvents: '', transition: 'none', transform: '' };
+  a.forEach(g => {
+    const c = els[g.id];
+    c._lv = 0;
+    clearTimeout(c._t);
+    Object.assign(c.style, RESET);
+    grid.appendChild(c);
+  });
+ 
+  // keep the page height steady, then ease to the new height
+  grid.style.transition = 'none';
+  grid.style.minHeight = '';
+  const h1 = grid.offsetHeight;
+  grid.style.minHeight = h0 + 'px';
+ 
+  // 3) put each card back where it was (or small, if it is new)
+  let k = 0;
+  a.forEach(g => {
+    const c = els[g.id];
+    const f = first.get(g.id);
+    if (f) {
+      const l = c.getBoundingClientRect();
+      c.style.opacity = 1;
+      c.style.transform = `translate(${f.left - l.left}px,${f.top - l.top}px)`;
+      c._in = 0;
+    } else {
+      c.style.opacity = 0;
+      c.style.transform = 'scale(.85)';
+      c._in = ++k;
+    }
+  });
+  void grid.offsetWidth;   // force the browser to apply the starting positions
+ 
+  // 4) animate everything to its final spot
+  grid.style.transition = 'min-height .55s cubic-bezier(.2,.9,.25,1)';
+  grid.style.minHeight = h1 + 'px';
+  a.forEach(g => {
+    const c = els[g.id];
+    const d = c._in ? 80 + Math.min((c._in - 1) * 12, 240) : 0;   // new cards start slightly later
+    c.style.transition = `transform .55s cubic-bezier(.2,.9,.25,1) ${d}ms,opacity .4s ease ${d}ms`;
+    c.style.transform = '';
+    c.style.opacity = 1;
+  });
+ 
+  // 5) clean up when finished
+  setTimeout(() => {
+    if (t !== token) return;
+    grid.style.minHeight = '';
+    grid.style.transition = '';
+    a.forEach(g => { const s = els[g.id].style; s.transition = ''; s.transform = ''; s.opacity = ''; });
+  }, 1000);
+}
+ 
+/* ---- hearts, "Jump back in" row, headings ---- */
+function syncHearts() {
+  G.forEach(g => {
+    const b = els[g.id].querySelector('.fav');
+    const on = S.favs.includes(g.id);
+    b.classList.toggle('on', on);
+    b.textContent = on ? '♥' : '♡';
+  });
+}
+ 
+function renderRail() {
+  const recent = S.recent.map(id => G.find(g => g.id === id)).filter(Boolean).slice(0, 10);
+  const wrap = $('#recentRail');
+  const wasShown = wrap.style.display === 'block';
+  const show = view === 'all' && recent.length > 0;
+ 
+  $('#rail').innerHTML = recent.map(g =>
+    `<a href="${g.href}" data-id="${g.id}"><img src="${g.img}" alt="">${esc(g.name)}</a>`
+  ).join('');
+  wrap.style.display = show ? 'block' : 'none';
+  if (show && !wasShown) { wrap.classList.remove('in'); void wrap.offsetWidth; wrap.classList.add('in'); }
+}
+ 
+// redraws the games area after a view / filter change
+function update() {
+  const a = list();
+  const title = { all: 'Games', favs: 'Favorites', recent: 'Recently played' }[view];
+  const head = $('#head');
+ 
+  $('#total').textContent = G.filter(g => !g.web).length;
+  $('#favCount').textContent = S.favs.length || '';
+  if (head.textContent !== title) swap(head, () => head.textContent = title);
+  document.querySelectorAll('.nav [data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === view));
+ 
+  renderRail();
+  layout(a);
+ 
+  const empty = $('#empty');
+  const msg = a.length ? '' : ({
+    favs: 'No favorites yet. Tap the heart on any game to save it here.',
+    recent: 'Games you play will show up here.'
+  }[view] || 'No games in this category.');
+  if (msg) {
+    empty.textContent = msg;
+    empty.style.display = 'block';
+    empty.classList.remove('in'); void empty.offsetWidth; empty.classList.add('in');
+  } else {
+    empty.style.display = 'none';
+  }
+}
+ 
+// redraws everything (used after log in / log out)
+function refresh() {
+  syncHearts();
+  renderAcct(true);
+  update();
+}
+ 
+/* ---- cards tilt toward the mouse ---- */
+grid.addEventListener('pointermove', e => {
+  if (e.pointerType === 'touch') return;
+  const c = e.target.closest('.card');
+  if (!c) return;
+  const g = grid.getBoundingClientRect();
+  const x = (e.clientX - (g.left + c.offsetLeft)) / c.offsetWidth;    // 0 (left) to 1 (right)
+  const y = (e.clientY - (g.top  + c.offsetTop))  / c.offsetHeight;   // 0 (top)  to 1 (bottom)
+  c.style.setProperty('--ry', (x - .5) * 20 + 'deg');
+  c.style.setProperty('--rx', (.5 - y) * 20 + 'deg');
+  c.style.setProperty('--mx', x * 100 + '%');
+  c.style.setProperty('--my', y * 100 + '%');
+});
+grid.addEventListener('pointerout', e => {
+  const c = e.target.closest('.card');
+  if (c && !c.contains(e.relatedTarget)) ['--rx', '--ry', '--mx', '--my'].forEach(p => c.style.removeProperty(p));
+});
+ 
+/* ---- search ---- */
+$('#q').oninput = () => {
+  const q = $('#q').value.trim().toLowerCase();
+  const pane = $('#pane');
+  if (!q) return pane.classList.remove('open');
+ 
+  const results = G.filter(g => g.name.toLowerCase().includes(q) || g.id.includes(q) || g.dn.includes(q));
+  pane.innerHTML = results.map(g =>
+    `<a href="${g.href}" data-id="${g.id}"><img src="${g.img}" alt=""><span>${g.id === 'wbwwb' ? 'WBWWB' : esc(g.name)}</span></a>`
+  ).join('') || '<div class="empty" style="padding:12px">No matches</div>';
+  pane.classList.add('open');
+};
+ 
+ 
+/* ==========================================================================
+   7. PAGE EVENTS
+   ========================================================================== */
+ 
+/* ---- game viewer: games open on top of the menu (so the Home button can show during play) ---- */
+const gameView = $('#gameView');
+ 
+function openGame(url) {
+  const frame = document.createElement('iframe');
+  frame.title = 'Game';
+  frame.allow = 'fullscreen; autoplay; gamepad; clipboard-write';
+  frame.allowFullscreen = true;
+  frame.src = url;
+  frame.addEventListener('load', () => { try { frame.contentWindow.focus(); } catch {} });
+  gameView.replaceChildren(frame);
+  gameView.classList.add('open');
+  document.body.classList.add('playing');
+  $('#pane').classList.remove('open');
+  try { history.pushState({ game: true }, ''); } catch {}   // so the browser Back button returns to the menu
+}
+ 
+function closeGame() {
+  document.body.classList.remove('playing');
+  gameView.classList.remove('open');
+  setTimeout(() => { if (!document.body.classList.contains('playing')) gameView.replaceChildren(); }, 300);   // removing the frame stops the game + its sound
+}
+ 
+$('#homeBtn').onclick = () => {
+  closeGame();
+  try { if (history.state && history.state.game) history.back(); } catch {}
+};
+addEventListener('popstate', () => { if (document.body.classList.contains('playing')) closeGame(); });
+ 
+/* ---- clicks: filters, sidebar views, hearts, recently played, closing search ---- */
+document.addEventListener('click', e => {
+  // filter chips
+  const chip = e.target.closest('.chip');
+  if (chip) {
+    cat = chip.dataset.c;
+    document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === chip));
+    return update();
+  }
+ 
+  // sidebar: Games / Favorites / Recently played
+  const nav = e.target.closest('.nav [data-view]');
+  if (nav) { view = nav.dataset.view; return update(); }
+ 
+  // favorite heart
+  const fav = e.target.closest('.fav');
+  if (fav) {
+    const id = fav.dataset.f;
+    const i = S.favs.indexOf(id);
+    i < 0 ? S.favs.push(id) : S.favs.splice(i, 1);
+    persist();
+ 
+    const on = i < 0;
+    fav.classList.toggle('on', on);
+    fav.textContent = on ? '♥' : '♡';
+    fav.classList.remove('pop'); void fav.offsetWidth; fav.classList.add('pop');
+    $('#favCount').textContent = S.favs.length || '';
+    if (view === 'favs') update();
+    return;
+  }
+ 
+  // opening a game: remember it in "Recently played"
+  const link = e.target.closest('a[data-id]');
+  if (link) {
+    S.recent = [link.dataset.id, ...S.recent.filter(x => x !== link.dataset.id)].slice(0, 20);
+    persist();
+ 
+    // plain click: open the game in the viewer (Ctrl/Cmd/Shift-click still opens a new tab)
+    if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+      e.preventDefault();
+      openGame(link.href);
+    }
+  }
+ 
+  // clicking away closes the search results
+  if (!e.target.closest('#search')) $('#pane').classList.remove('open');
+});
+ 
+// Escape closes any window
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeSettings(); }
+});
+ 
+/* ---- random game ---- */
+$('#random').onclick = () => {
+  const games = G.filter(g => !g.web);
+  openGame(games[Math.floor(Math.random() * games.length)].href);
+};
+ 
+/* ---- changelog ---- */
+let shown = 1;   // how many entries are visible
+ 
+function drawLog() {
+  $('#log').innerHTML = LOG.slice(0, shown).map(([title, body], i) => {
+    const anim = i === shown - 1 && shown > 1 ? ' style="animation:rise .45s ease both"' : '';
+    return `<div class="entry"${anim}><h4>${title}</h4><p>${body}</p></div>`;
+  }).join('');
+  $('#more').disabled = shown >= LOG.length;
+  $('#less').style.display = shown > 1 ? 'inline-block' : 'none';
+}
+$('#more').onclick = () => { shown++; drawLog(); };
+$('#less').onclick = () => { shown--; drawLog(); };
+$('#goLog').onclick = () => $('#changelog').scrollIntoView({ behavior: 'smooth' });
+ 
+/* ---- back-to-top button ---- */
+const toTop = $('#toTop');
+addEventListener('scroll', () => toTop.classList.toggle('show', scrollY > 500), { passive: true });
+toTop.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+ 
+ 
+/* ==========================================================================
+   8. START
+   ========================================================================== */
 applySettings();
- 
-LOG.unshift(["Version 1.306 — November 5, 2026","Smoother animations, press effects on buttons, a back-to-top button, and optional Firebase accounts."]);
-loadGuest();drawLog();renderAcct(false);syncHearts();update();boot();
-</script>
+loadGuest();
+drawLog();
+renderAcct(false);
+syncHearts();
+update();
+boot();
+  </script>
 </body>
 </html>
