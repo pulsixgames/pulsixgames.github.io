@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PULSIX RULES</title>
+<style>
+  /* black bars around a 16:9 picture, like the original screen */
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  body { display: grid; place-items: center; }
+  canvas {
+    width: min(100vw, calc(100vh * 16 / 9));
+    aspect-ratio: 16 / 9;
+    background: #fff;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;      /* chunky pixels */
+  }
+</style>
+</head>
+<body>
+<canvas id="c" width="384" height="216"></canvas>
+ 
+<script>
+/* ==========================================================================
+   PULSIX RULES: looping glitch-text screen
+   - vertical arm of the cross: big "PULSIX RULES" rows scrolling up
+   - horizontal arm of the cross: a black glitch band with the same text sliding sideways
+   - the four empty corners: small "pulsixgames.github.io" rows, scrolling in opposite directions
+   ========================================================================== */
+ 
+const W = 384, H = 216;                       // tiny internal resolution = pixelated look
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+ 
+const FONT  = "'Times New Roman', Times, Georgia, serif";
+const BIG   = "PULSIX RULES";
+const SMALL = "pulsixgames.github.io";
+const INK   = '#2f2f2f';                      // dark gray text
+ 
+/* ---------- settings you can tweak ---------- */
+const ARM_WIDTH_RATIO = 0.42;   // how wide the vertical arm is (share of the screen)
+const GAP             = 6;      // space between the arm and the small text
+const SPEED_ARM       = 30;     // px per second (vertical arm, scrolls up)
+const SPEED_CORNERS   = 20;     // px per second (left corners scroll down, right corners up)
+const SPEED_BAND      = 70;     // px per second (horizontal band, slides right)
+ 
+/* ---------- pixel-sharp text sprites ---------- */
+function textWidth(text, px) {
+  ctx.font = `700 ${px}px ${FONT}`;
+  return ctx.measureText(text).width;
+}
+ 
+function makeSprite(text, px, color) {
+  const pad = 2;
+  const w = Math.ceil(textWidth(text, px)) + pad * 2;
+  const h = Math.ceil(px * 1.25);
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  g.font = `700 ${px}px ${FONT}`;
+  g.textBaseline = 'middle';
+  g.fillStyle = color;
+  g.fillText(text, pad, h / 2 + px * 0.06);
+ 
+  // remove anti-aliasing: every pixel is either fully solid or empty
+  const img = g.getImageData(0, 0, w, h);
+  for (let i = 3; i < img.data.length; i += 4) img.data[i] = img.data[i] > 110 ? 255 : 0;
+  g.putImageData(img, 0, 0);
+  return c;
+}
+ 
+// big text: sized so the vertical arm takes ARM_WIDTH_RATIO of the screen
+const bigPx   = 20 * (W * ARM_WIDTH_RATIO) / textWidth(BIG, 20);
+const bigDark = makeSprite(BIG, bigPx, INK);
+const bigLite = makeSprite(BIG, bigPx, '#ffffff');
+const armW    = bigDark.width;
+const armX    = Math.round((W - armW) / 2);
+const bigRow  = Math.round(bigPx * 1.08);          // row spacing
+ 
+// small text: sized to fit exactly in the empty corners beside the arm
+const cornerW = armX - GAP;
+const smallPx = Math.min(bigPx * 0.5, 20 * (cornerW * 0.96) / textWidth(SMALL, 20));
+const smallDark = makeSprite(SMALL, smallPx, INK);
+const smallRow  = Math.round(smallPx * 1.08);
+ 
+// horizontal arm
+const bandH = bigDark.height + 2;
+const bandY = Math.round((H - bandH) / 2);
+ 
+/* ---------- drawing helpers ---------- */
+const mod = (a, n) => ((a % n) + n) % n;
+ 
+// repeat a sprite down a column, scrolled by `offset` pixels (loops seamlessly)
+function column(sprite, x0, width, rowH, offset) {
+  ctx.save();
+  ctx.beginPath(); ctx.rect(x0, 0, width, H); ctx.clip();
+  const x = Math.round(x0 + (width - sprite.width) / 2);
+  for (let y = -rowH + mod(offset, rowH); y < H; y += rowH) ctx.drawImage(sprite, x, Math.round(y));
+  ctx.restore();
+}
+ 
+/* ---------- glitch state ---------- */
+let glitchFrames = 0, slices = [], flip = 0;
+function maybeGlitch() {
+  if (glitchFrames > 0) { glitchFrames--; return; }
+  if (Math.random() < 0.025) {                       // start a new glitch
+    glitchFrames = 5 + Math.floor(Math.random() * 7);
+    slices = Array.from({ length: 3 + Math.floor(Math.random() * 3) }, () => ({
+      y: Math.floor(Math.random() * H),
+      h: 6 + Math.floor(Math.random() * 26),
+      dx: (Math.random() < .5 ? -1 : 1) * (2 + Math.floor(Math.random() * 9))
+    }));
+  } else slices = [];
+}
+ 
+/* ---------- one frame ---------- */
+function frame(ms) {
+  const t = ms / 1000;
+  maybeGlitch();
+ 
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, W, H);
+ 
+  // 1) corners: small text, left side scrolls down, right side scrolls up
+  column(smallDark, 0,            cornerW, smallRow,  t * SPEED_CORNERS);
+  column(smallDark, W - cornerW,  cornerW, smallRow, -t * SPEED_CORNERS);
+ 
+  // 2) vertical arm: big text scrolling up
+  column(bigDark, armX, armW, bigRow, -t * SPEED_ARM);
+ 
+  // 3) glitch: shift random horizontal slices sideways
+  slices.forEach(s => ctx.drawImage(canvas, 0, s.y, W, s.h, s.dx, s.y, W, s.h));
+ 
+  // 4) horizontal arm: black band with white text sliding across the whole screen
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, bandY, W, bandH); ctx.clip();
+ 
+  flip = (glitchFrames > 0 && Math.random() < 0.3) ? 1 : 0;       // occasional flash to inverted colors
+  ctx.fillStyle = flip ? '#fff' : '#000';
+  ctx.fillRect(0, bandY, W, bandH);
+ 
+  const tile = bigLite.width + 10;
+  const sprite = flip ? bigDark : bigLite;
+  const sliceH = Math.ceil(bandH / 4);
+  for (let k = 0; k < 4; k++) {                                   // 4 strips; they split apart while glitching
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, bandY + k * sliceH, W, sliceH); ctx.clip();
+    const jitter = glitchFrames > 0 ? (Math.random() < .5 ? -1 : 1) * Math.floor(Math.random() * 7) : 0;
+    for (let x = -tile + mod(t * SPEED_BAND, tile) + jitter; x < W; x += tile) {
+      ctx.drawImage(sprite, Math.round(x), bandY + Math.round((bandH - sprite.height) / 2));
+    }
+    ctx.restore();
+  }
+  ctx.restore();
+ 
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
