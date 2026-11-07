@@ -1,152 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G4MQ8PHH7T"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-G4MQ8PHH7T');</script>
-<meta name="google-site-verification" content="xyIEzBKAISm0GpwHevG6H2OD84DAG8pliiGei0OsNMU" />
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Home</title>
-<link rel="icon" href="./siteimages/favicon.ico" type="image/x-icon">
-<link rel="apple-touch-icon" href="./siteimages/apple-touch-icon.png" type="image/png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<style>
+ 
+  <!-- =====================================================
+       index.html  —  password screen + cloak selector
+       Sections:  1 Head  ·  2 Styles  ·  3 Page  ·  4 Script
+       ===================================================== -->
+ 
+  <!-- 1. HEAD -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-G4MQ8PHH7T"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-G4MQ8PHH7T');
+  </script>
+  <meta name="google-site-verification" content="xyIEzBKAISm0GpwHevG6H2OD84DAG8pliiGei0OsNMU" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Home</title>
+  <link rel="icon" href="./siteimages/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="./siteimages/apple-touch-icon.png" type="image/png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+ 
+ 
+  <!-- 2. STYLES -->
+  <style>
+/* ==========================================================================
+   TABLE OF CONTENTS
+   1. Fonts & colors     4. Cards (password + selector)   7. Pulse
+   2. Base               5. Inputs & buttons
+   3. Background         6. Text & small details
+   ========================================================================== */
+ 
+ 
+/* ==========================================================================
+   1. FONTS & COLORS
+   ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=DM+Sans:wght@400;500;600&display=swap');
-:root{--night:#0a0a0a;--plum:#161616;--line:rgba(255,255,255,.12);--text:#f2f2f2;--dim:#a1a1a6;--orange:#ffffff;--pink:#b4b4ba;--mint:#e6e6e8}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--night);color:var(--dim);min-height:100vh;display:grid;place-items:center;padding:16px;overflow:hidden;user-select:none}
-:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
-.bg{position:fixed;inset:0;overflow:hidden;pointer-events:none}
-.bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 26s ease-in-out infinite alternate}
-.bg i:nth-child(1){width:46vw;height:46vw;background:#4a4a50;top:-14vw;left:-10vw}
-.bg i:nth-child(2){width:40vw;height:40vw;background:#2e2e33;bottom:-16vw;right:-8vw;animation-delay:-9s;opacity:.38}
-.bg i:nth-child(3){width:34vw;height:34vw;background:#55555c;top:30%;left:45%;animation-delay:-16s;opacity:.35}
-@keyframes drift{to{transform:translate(8vw,6vh) scale(1.15)}}
-@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-.box{position:relative;z-index:1;width:100%;max-width:440px;background:rgba(22,22,22,.8);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:30px;padding:40px 36px;text-align:center;animation:rise .6s ease-out;box-shadow:0 24px 60px rgba(0,0,0,.5)}
-h1,h2{font-family:'Bricolage Grotesque';font-weight:800;color:var(--text);letter-spacing:-.02em}
-h2{font-size:2rem;margin-bottom:22px}
-h1{font-size:clamp(2.4rem,8vw,3.2rem);margin-bottom:26px}
-input{width:100%;padding:14px 18px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--text);font:500 1rem 'DM Sans';text-align:center}
-input::placeholder{color:var(--dim)}
-.btn{all:unset;box-sizing:border-box;display:block;cursor:pointer;text-align:center;width:100%;padding:14px;border-radius:16px;font-weight:600;background:linear-gradient(135deg,var(--orange),var(--pink));color:#0a0a0a;transition:.2s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(180,180,190,.4)}
-#error{color:#ff8fa8;margin-top:14px;font-size:.9rem;opacity:0;transform:translateY(-4px);transition:opacity .3s,transform .3s}
-#error.show{opacity:1;transform:none}
-.row{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
-.row .btn{width:auto;min-width:170px;padding:15px 38px}
-.nofix{text-align:center}
-.nofix a{color:var(--dim);text-decoration:none;font-weight:500;transition:.2s}
-.nofix a:hover{color:var(--text)}
-.nofix small{display:block;font-size:.78rem;opacity:.7;margin-top:3px}
-#random-text{margin-top:28px;font-size:.92rem;line-height:1.55;max-width:360px;margin-inline:auto}
-#btn-wrap button{margin-top:16px}
-@keyframes shake{20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
-.box.shake{animation:shake .4s ease}
-#gate{transition:opacity .3s ease,transform .3s ease}
-#gate.out{opacity:0;transform:scale(.95) translateY(8px)}
-#random-text{animation:rise .6s .25s ease both}
-input{transition:border-color .25s,background .25s,box-shadow .25s}
-input:focus{outline:none;border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.11);box-shadow:0 0 0 3px rgba(255,255,255,.07)}
-.btn,.nofix a{transition:transform .4s cubic-bezier(.3,1.7,.5,1),box-shadow .25s,color .25s,filter .2s;-webkit-tap-highlight-color:transparent}
-.nofix a{display:inline-block}
-.btn:active{transform:scale(.9) translateY(1px);filter:brightness(.88);transition-duration:.08s}
-.nofix a:active{transform:scale(.9);transition-duration:.08s}
-/* background beat: 90 BPM = 60/90 s = .6667s per pulse */
-.bg::before,.bg::after{content:"";position:absolute;inset:-25%;pointer-events:none}
-.bg::after{background:radial-gradient(circle,transparent 38%,rgba(255,255,255,.075) 58%,transparent 76%);animation:beatRing .6667s cubic-bezier(.3,.6,.4,1) infinite}
-.bg::before{background:radial-gradient(circle at center,rgba(255,255,255,.05),transparent 45%);animation:beatGlow .6667s ease-out infinite}
-@keyframes beatRing{0%{transform:scale(1.35);opacity:0}25%{opacity:1}100%{transform:scale(.6);opacity:0}}
-@keyframes beatGlow{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
-</style>
+ 
+:root {
+  --night: #13102b;
+  --plum:  #241a4a;
+  --line:  rgba(255,255,255,.12);
+  --text:  #f6f1ff;
+  --dim:   #b3a8d6;
+  --orange:#ff8a4c;
+  --pink:  #ff5fa2;
+  --mint:  #5ef2c4;
+}
+ 
+ 
+/* ==========================================================================
+   2. BASE
+   ========================================================================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--night);
+  color: var(--dim);
+  min-height: 100vh;
+  display: grid; place-items: center;
+  padding: 16px;
+  overflow: hidden;
+  user-select: none;
+}
+ 
+:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+ 
+@keyframes rise  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes shake { 20% { transform: translateX(-9px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+ 
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+ 
+ 
+/* ==========================================================================
+   3. BACKGROUND  (drifting glows)
+   ========================================================================== */
+.bg { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.bg i {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .5;
+  animation: drift 26s ease-in-out infinite alternate;
+}
+.bg i:nth-child(1) { width: 46vw; height: 46vw; background: #ff5fa2; top: -14vw;    left: -10vw; }
+.bg i:nth-child(2) { width: 40vw; height: 40vw; background: #ff8a4c; bottom: -16vw; right: -8vw;  animation-delay: -9s;  opacity: .38; }
+.bg i:nth-child(3) { width: 34vw; height: 34vw; background: #6a4cff; top: 30%;      left: 45%;    animation-delay: -16s; opacity: .35; }
+@keyframes drift { to { transform: translate(8vw, 6vh) scale(1.15); } }
+ 
+ 
+/* ==========================================================================
+   4. CARDS  (the password card #gate and the selector card #realContent)
+   ========================================================================== */
+.box {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 440px;
+  background: rgba(36,26,74,.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  padding: 40px 36px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  animation: rise .6s ease-out;
+}
+.box.shake { animation: shake .4s ease; }          /* wrong password */
+ 
+#gate { transition: opacity .3s ease, transform .3s ease; }
+#gate.out { opacity: 0; transform: scale(.95) translateY(8px); }   /* fades away when unlocked */
+ 
+ 
+/* ==========================================================================
+   5. INPUTS & BUTTONS
+   ========================================================================== */
+input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.07);
+  color: var(--text);
+  font: 500 1rem 'DM Sans';
+  text-align: center;
+  transition: border-color .25s, background .25s, box-shadow .25s;
+}
+input::placeholder { color: var(--dim); }
+input:focus {
+  outline: none;
+  border-color: rgba(255,255,255,.35);
+  background: rgba(255,255,255,.11);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.07);
+}
+ 
+.btn {
+  all: unset; box-sizing: border-box;
+  display: block; width: 100%;
+  cursor: pointer; text-align: center;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  color: #1a0f2e;
+  transition: transform .4s cubic-bezier(.3,1.7,.5,1), box-shadow .25s, color .25s, filter .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:hover  { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(255,95,162,.4); }
+.btn:active { transform: scale(.9) translateY(1px); filter: brightness(.88); transition-duration: .08s; }
+ 
+#btn-wrap button { margin-top: 16px; }
+ 
+/* "Cloak" button + "No Cloak" link side by side */
+.row { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; }
+.row .btn { width: auto; min-width: 170px; padding: 15px 38px; }
+ 
+.nofix { text-align: center; }
+.nofix a {
+  display: inline-block;
+  color: var(--dim); text-decoration: none; font-weight: 500;
+  transition: transform .4s cubic-bezier(.3,1.7,.5,1), box-shadow .25s, color .25s, filter .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.nofix a:hover  { color: var(--text); }
+.nofix a:active { transform: scale(.9); transition-duration: .08s; }
+.nofix small { display: block; font-size: .78rem; opacity: .7; margin-top: 3px; }
+ 
+ 
+/* ==========================================================================
+   6. TEXT & SMALL DETAILS
+   ========================================================================== */
+h1, h2 { font-family: 'Bricolage Grotesque'; font-weight: 800; color: var(--text); letter-spacing: -.02em; }
+h2 { font-size: 2rem; margin-bottom: 22px; }
+h1 { font-size: clamp(2.4rem, 8vw, 3.2rem); margin-bottom: 26px; }
+ 
+#error { color: #ff8fa8; margin-top: 14px; font-size: .9rem; opacity: 0; transform: translateY(-4px); transition: opacity .3s, transform .3s; }
+#error.show { opacity: 1; transform: none; }
+ 
+#random-text {
+  margin: 28px auto 0; max-width: 360px;
+  font-size: .92rem; line-height: 1.55;
+  animation: rise .6s .25s ease both;
+}
+ 
+ 
+/* ==========================================================================
+   7. PULSE  (ring shrinking inward + faint center glow)
+   90 BPM = 60/90 s = .6667s per beat
+   ========================================================================== */
+.bg::before, .bg::after { content: ""; position: absolute; inset: -25%; pointer-events: none; }
+.bg::after {
+  background: radial-gradient(circle, transparent 38%, rgba(255,255,255,.075) 58%, transparent 76%);
+  animation: beatRing .6667s cubic-bezier(.3,.6,.4,1) infinite;
+}
+.bg::before {
+  background: radial-gradient(circle at center, rgba(255,255,255,.05), transparent 45%);
+  animation: beatGlow .6667s ease-out infinite;
+}
+@keyframes beatRing { 0% { transform: scale(1.35); opacity: 0; } 25% { opacity: 1; } 100% { transform: scale(.6); opacity: 0; } }
+@keyframes beatGlow { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+  </style>
 </head>
+ 
+ 
+<!-- ============================ 3. PAGE ============================ -->
 <body>
-<div class="bg"><i></i><i></i><i></i></div>
  
-<div class="box" id="gate">
-  <h2>Enter password</h2>
-  <input type="password" id="passwordInput" placeholder="Password" aria-label="Password">
-  <div id="btn-wrap"><button class="btn" onclick="checkPassword()">Enter</button></div>
-  <p id="error">Incorrect password</p>
-</div>
+  <div class="bg"><i></i><i></i><i></i></div>
  
-<div class="box" id="realContent" style="display:none">
-  <h1>Cloak Selector</h1>
-  <div class="row">
-    <button class="btn" id="bypass-button">Cloak</button>
-    <div class="nofix"><a href="site">No Cloak</a><small>less features</small></div>
+  <!-- password screen -->
+  <div class="box" id="gate">
+    <h2>Enter password</h2>
+    <input type="password" id="passwordInput" placeholder="Password" aria-label="Password">
+    <div id="btn-wrap"><button class="btn" onclick="checkPassword()">Enter</button></div>
+    <p id="error">Incorrect password</p>
   </div>
-  <div id="random-text"></div>
-</div>
  
+  <!-- shown after the right password -->
+  <div class="box" id="realContent" style="display:none">
+    <h1>Cloak Selector</h1>
+    <div class="row">
+      <button class="btn" id="bypass-button">Cloak</button>
+      <div class="nofix"><a href="site">No Cloak</a><small>less features</small></div>
+    </div>
+    <div id="random-text"></div>
+  </div>
+ 
+ 
+<!-- ============================ 4. SCRIPT ============================ -->
 <script>
-function launchCloak(frameSrc){
-  const newTab=window.open('about:blank');
-  if(!newTab){alert("Pop-up blocked! Please allow pop-ups for this site.");return}
-  newTab.opener=null;
-  window.location.href='https://classroom.google.com';
-  const code=`
-document.title="Home";
-const favicon=document.createElement('link');favicon.rel='icon';favicon.href='./siteimages/apple-touch-icon.png';document.head.appendChild(favicon);
-const style=document.createElement('style');
-style.textContent=\`
-body{margin:0;background:#0a0a0a}
-iframe{width:100vw;height:100vh;border:none}
-#go-home-btn{position:fixed;top:10px;right:10px;width:27px;height:27px;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:linear-gradient(135deg,#ffffff,#b4b4ba);color:#0a0a0a;cursor:pointer;white-space:nowrap;overflow:hidden;box-shadow:0 4px 11px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.3,1.7,.5,1),box-shadow .25s}
-#go-home-btn:hover{transform:translateY(-2px)}
-#go-home-btn:active{transform:scale(.9)}
-#go-home-btn.expanded{width:auto;border-radius:9px;padding:0 10px;font:600 0.5rem sans-serif}
-#go-home-btn span{margin-left:5px;font-size:0.5rem;display:none}
-#go-home-btn.expanded span{display:inline}
+/* ==========================================================================
+   TABLE OF CONTENTS
+   1. Cloak (opens the about:blank tab + the Go Home button inside it)
+   2. Random quotes
+   3. Password screen
+   ========================================================================== */
+ 
+ 
+/* ==========================================================================
+   1. CLOAK
+   Opens a blank tab that shows the site in an iframe, and sends this tab
+   to Google Classroom. frameSrc = the page shown inside the iframe.
+   showHome = add a Go Home button to the blank tab. (The main site has its own
+   Home button that appears during games, so it passes false.)
+   ========================================================================== */
+function launchCloak(frameSrc, showHome) {
+  const newTab = window.open('about:blank');
+  if (!newTab) { alert("Pop-up blocked! Please allow pop-ups for this site."); return; }
+  newTab.opener = null;
+  window.location.href = 'https://classroom.google.com';
+ 
+  // This code runs inside the new tab.
+  const code = `
+document.title = "Home";
+ 
+const favicon = document.createElement('link');
+favicon.rel = 'icon';
+favicon.href = './siteimages/apple-touch-icon.png';
+document.head.appendChild(favicon);
+ 
+/* Go Home button: liquid glass, top right, 40px, same center line as the site's back-to-top arrow */
+const style = document.createElement('style');
+style.textContent = \`
+  body { margin: 0; background: #13102b; }
+  iframe { width: 100vw; height: 100vh; border: none; }
+ 
+  #go-home-btn {
+    position: fixed; top: 20px; right: 23px; z-index: 9999;
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; white-space: nowrap; cursor: pointer;
+    font-size: 18px; color: #f6f1ff;
+    background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.34), rgba(255,255,255,.09) 55%, rgba(255,255,255,.04));
+    backdrop-filter: blur(14px) saturate(170%);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    border: 1px solid rgba(255,255,255,.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -6px 12px rgba(255,255,255,.05), 0 8px 22px rgba(0,0,0,.35);
+    transition: transform .35s cubic-bezier(.3,1.7,.5,1), box-shadow .25s, border-color .25s;
+  }
+  #go-home-btn::before {          /* light sheen sweeping across on hover */
+    content: ""; position: absolute; top: 0; left: -80%;
+    width: 45%; height: 100%;
+    background: linear-gradient(115deg, transparent, rgba(255,255,255,.45), transparent);
+    transform: skewX(-18deg);
+    transition: left .6s ease;
+  }
+  #go-home-btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.38); }
+  #go-home-btn:hover::before { left: 130%; }
+  #go-home-btn:active { transform: scale(.9); }
+ 
+  #go-home-btn.expanded { width: auto; border-radius: 20px; padding: 0 16px; font: 600 .8rem sans-serif; }
+  #go-home-btn span { position: relative; margin-left: 6px; font-size: .8rem; display: none; }
+  #go-home-btn.expanded span { display: inline; }
 \`;
 document.head.appendChild(style);
-const iframe=document.createElement('iframe');iframe.src='${frameSrc}';document.body.appendChild(iframe);
-const b=document.createElement('button');b.id='go-home-btn';b.innerHTML='🏠︎<span>Go Home</span>';
-b.addEventListener('mouseenter',()=>b.classList.add('expanded'));
-b.addEventListener('mouseleave',()=>b.classList.remove('expanded'));
-b.addEventListener('click',()=>{iframe.src=iframe.src});
-document.body.appendChild(b);`;
-  const script=newTab.document.createElement('script');
-  script.textContent=code;
-  newTab.document.body.innerHTML='';
+ 
+const iframe = document.createElement('iframe');
+iframe.src = '${frameSrc}';
+document.body.appendChild(iframe);
+ 
+if (${showHome}) {
+  const homeBtn = document.createElement('button');
+  homeBtn.id = 'go-home-btn';
+  homeBtn.innerHTML = '🏠&#xFE0E;<span>Go Home</span>';
+  homeBtn.addEventListener('mouseenter', () => homeBtn.classList.add('expanded'));
+  homeBtn.addEventListener('mouseleave', () => homeBtn.classList.remove('expanded'));
+  homeBtn.addEventListener('click', () => { iframe.src = iframe.src; });
+  document.body.appendChild(homeBtn);
+}`;
+ 
+  const script = newTab.document.createElement('script');
+  script.textContent = code;
+  newTab.document.body.innerHTML = '';
   newTab.document.body.appendChild(script);
 }
-document.getElementById('bypass-button').addEventListener('click',()=>launchCloak('site'));
-document.getElementById('passwordInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPassword()});
  
-const randomTexts=[
-"Welcome back!",
-"Don't let the teachers catch ya!",
-"I've got my eye on you...",
-"Would you rather play video games or do your school work? I know which one you chose.",
-"Does anyone want to hop on some games?",
-"I have a dream that every kid will be able to play video games in school.",
-"Fun Fact: This text has a 1 in 1,000,000 chance of appearing! Edit: No it doesn't that's a lie.",
-"Fun Fact: This text has a 1 in 12 chance of appearing! Edit: It really does and it's not a lie.",
-"This text appearing 1 out of 12 times means there are 11 other quotes like this waiting to be discovered!",
-".(emit-eerf evah uoy sselun) krow ruoy oD",
- "Special thanks to you!",
- "Recommend some games you like using the request form!"
- ];
+document.getElementById('bypass-button').addEventListener('click', () => launchCloak('site', false));
  
-function unlockSite(){
-  const gate=document.getElementById('gate');
+ 
+/* ==========================================================================
+   2. RANDOM QUOTES  (add or remove lines freely)
+   ========================================================================== */
+const randomTexts = [
+  "Welcome back!",
+  "Don't let the teachers catch ya!",
+  "I've got my eye on you...",
+  "Would you rather play video games or do your school work? I know which one you chose.",
+  "Does anyone want to hop on some games?",
+  "I have a dream that every kid will be able to play video games in school.",
+  "Fun Fact: This text has a 1 in 1,000,000 chance of appearing! Edit: No it doesn't that's a lie.",
+  "Fun Fact: This text has a 1 in 12 chance of appearing! Edit: It really does and it's not a lie.",
+  "This text appearing 1 out of 12 times means there are 11 other quotes like this waiting to be discovered!",
+  ".(emit-eerf evah uoy sselun) krow ruoy oD",
+  "Special thanks to you!",
+  "Recommend some games you like using the request form!"
+];
+ 
+ 
+/* ==========================================================================
+   3. PASSWORD SCREEN
+   "halltheballs" -> Cloak Selector     "secret" -> cloak straight away
+   ========================================================================== */
+function unlockSite() {
+  const gate = document.getElementById('gate');
   gate.classList.add('out');
-  setTimeout(()=>{
-    gate.style.display='none';
-    document.getElementById('realContent').style.display='block';
-    document.getElementById('random-text').textContent=randomTexts[Math.floor(Math.random()*randomTexts.length)];
-  },300);
+  setTimeout(() => {
+    gate.style.display = 'none';
+    document.getElementById('realContent').style.display = 'block';
+    document.getElementById('random-text').textContent = randomTexts[Math.floor(Math.random() * randomTexts.length)];
+  }, 300);
 }
-function checkPassword(){
-  const v=document.getElementById('passwordInput').value;
-  if(v==='halltheballs')unlockSite();
-  else if(v==='secret')launchCloak('https://deploy-preview-12--zearnhaas.netlify.app');
-  else{
+ 
+function checkPassword() {
+  const value = document.getElementById('passwordInput').value;
+ 
+  if (value === 'halltheballs') {
+    unlockSite();
+  } else if (value === 'secret') {
+    launchCloak('https://deploy-preview-12--zearnhaas.netlify.app', true);
+  } else {
     document.getElementById('error').classList.add('show');
-    const g=document.getElementById('gate');g.classList.remove('shake');void g.offsetWidth;g.classList.add('shake');
+    const gate = document.getElementById('gate');
+    gate.classList.remove('shake'); void gate.offsetWidth; gate.classList.add('shake');   // shake
   }
 }
+ 
+document.getElementById('passwordInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
 </script>
+ 
 </body>
 </html>
