@@ -43,7 +43,7 @@
     2. Base                         8. Changelog, links, footer
     3. Background (glows + pulse)   9. Modals (log in + settings)
     4. Sidebar                     10. Back-to-top + Home buttons
-    5. Buttons                     11. Themes (PULSIX RULES white + black, neon, black, blue, pink)
+    5. Buttons                     11. Themes (PULSIX RULES light + dark, neon, black, blue, pink)
     6. Main (search, filters,      12. PULSIX RULES effects   13. Small screens
        recently played, games)
    ========================================================================== */
@@ -73,11 +73,10 @@
   --glow:  47,47,47;                /* RGB used for button glows */
   --on:    #ffffff;                 /* text on accent buttons */
  
-  /* PULSIX RULES effects: line color, glitch band color, tiled text */
+  /* PULSIX RULES effects: line color, glitch band color, band text */
   --ink: #2f2f2f; --ink-rgb: 47,47,47; --band: #000; --scan: 0,0,0;
-  --tile-dark:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='64'%3E%3Ctext x='210' y='48' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='48' text-anchor='middle' fill='%232f2f2f' fill-opacity='.075'%3EPULSIX RULES%3C/text%3E%3C/svg%3E");
+  --tile-dark:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect x='10' y='10' width='44' height='44' fill='%232f2f2f' fill-opacity='.075'/%3E%3C/svg%3E");
   --tile-lite:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='46'%3E%3Ctext x='210' y='35' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='34' text-anchor='middle' fill='%23ffffff'%3EPULSIX RULES%3C/text%3E%3C/svg%3E");
-  --tile-strong: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='64'%3E%3Ctext x='210' y='48' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='48' text-anchor='middle' fill='%232f2f2f' fill-opacity='.9'%3EPULSIX RULES%3C/text%3E%3C/svg%3E");
 }
  
  
@@ -450,7 +449,7 @@ footer a { color: var(--mint); }
 .pal[aria-pressed=true] i { box-shadow: 0 0 0 3px var(--plum), 0 0 0 5px var(--text); }
 .pal:active { transform: scale(.92); transition-duration: .08s; }
 .pal .nm { text-align: center; line-height: 1.15; }
-.pal .nm small { display: block; font-size: .72em; letter-spacing: .12em; opacity: .85; }   /* the WHITE / BLACK part is smaller */
+.pal .nm small { display: block; font-size: .72em; letter-spacing: .12em; opacity: .85; }   /* the LIGHT / DARK part is smaller */
  
 /* on/off switch */
 .sw {
@@ -568,9 +567,8 @@ html[data-theme=pulsixblack] {
   --side:rgba(0,0,0,.9); --panel:rgba(0,0,0,.88);
   --glow:242,242,242; --on:#000000;
   --ink:#f2f2f2; --ink-rgb:242,242,242; --band:#f2f2f2; --scan:255,255,255;
-  --tile-dark:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='64'%3E%3Ctext x='210' y='48' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='48' text-anchor='middle' fill='%23ffffff' fill-opacity='.07'%3EPULSIX RULES%3C/text%3E%3C/svg%3E");
+  --tile-dark:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect x='10' y='10' width='44' height='44' fill='%23ffffff' fill-opacity='.07'/%3E%3C/svg%3E");
   --tile-lite:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='46'%3E%3Ctext x='210' y='35' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='34' text-anchor='middle' fill='%23000000'%3EPULSIX RULES%3C/text%3E%3C/svg%3E");
-  --tile-strong: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='64'%3E%3Ctext x='210' y='48' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='48' text-anchor='middle' fill='%23f2f2f2' fill-opacity='.95'%3EPULSIX RULES%3C/text%3E%3C/svg%3E");
 }
 html[data-theme=neon] {
   --night:#13102b; --plum:#241a4a; --card:#2d2260;
@@ -607,10 +605,11 @@ html[data-theme=pink] {
  
  
 /* ==========================================================================
-   12. PULSIX RULES THEME EFFECTS  (white, glitchy, jittery lines)
-   Applies to both PULSIX RULES themes (white + black): <html> gets a data-fx attribute.
-   Colors come from --ink / --band / tile variables, so the black version just swaps them.
-   - tiled "PULSIX RULES" text scrolls behind the page, glitch bands flash across it
+   12. PULSIX RULES THEME EFFECTS  (light, glitchy, jittery lines)
+   Applies to both PULSIX RULES themes (light + dark): <html> gets a data-fx attribute.
+   Colors come from --ink / --band / tile variables, so the dark version just swaps them.
+   - square tiles scroll behind the page and every 10 seconds they speed up for a moment;
+     glitch bands (with "PULSIX RULES" text) flash across it
    - lines are jittery: the #wobble filter (see the <svg> at the top of <body>)
      is re-seeded about 8 times a second by the script
    - headings glitch every few seconds
@@ -625,9 +624,9 @@ html[data-fx] :is(input, button, .logo, .logo small, h2.head, .sec, .panel h3, .
 html[data-fx] :is(.logo, h2.head, .sec, .panel h3, .box h3, .label) { text-transform: uppercase; letter-spacing: .04em; }
 html[data-fx] :is(.logo, h2.head, .sec, .panel h3, .box h3, .nav button, .chip, .btn) { font-weight: 700; }
  
-/* ---- background: scrolling text tiles + glitch bands + dark pulse ---- */
+/* ---- background: scrolling square tiles + glitch bands + dark pulse ---- */
 html[data-fx] .bg {
-  background: var(--night) var(--tile-dark) 0 0 / 420px 64px;
+  background: var(--night) var(--tile-dark) 0 0 / 64px 64px;
   animation: tileScroll 9s linear infinite;
 }
 @keyframes tileScroll { to { background-position: 0 -64px; } }
@@ -722,23 +721,11 @@ html[data-fx] .card { box-shadow: 4px 4px 0 var(--ink); }
 html[data-fx] .card:hover { box-shadow: 9px 9px 0 var(--ink); }
 html[data-fx] :is(.panel, .box) { box-shadow: 6px 6px 0 var(--ink); }
  
-/* picture jitters when you hover a game */
-@keyframes imgJit {
-  0% { transform: none; } 20% { transform: translateX(-3px); } 40% { transform: translateX(3px) scaleY(1.02); }
-  60% { transform: translateX(-2px); } 80% { transform: translateX(1px); } 100% { transform: none; }
-}
-html[data-fx]:not(.no-glitch) .card:hover img { animation: imgJit .3s steps(1, end); }
- 
 /* ---- turning the motion off ---- */
 html[data-fx].no-glitch .bg { animation: none; }
 html[data-fx].no-glitch .bg i { display: none; }
  
-/* ---- a column that zooms upward every 10 seconds (made by the script) ---- */
-html[data-fx] .colfx { position: absolute; top: 0; width: 420px; height: 100%; pointer-events: none; }   /* no background: only the text lights up */
-html[data-fx] .colfx u { position: absolute; inset: 0; background: var(--tile-strong) 0 0 / 420px 64px; -webkit-mask-image: repeating-linear-gradient(0deg, #000 0 2px, transparent 2px 4px); mask-image: repeating-linear-gradient(0deg, #000 0 2px, transparent 2px 4px); }   /* TV scanlines cut through the text */
- 
- 
-/* ---- WHITE version only: colors that were written for dark themes ---- */
+/* ---- LIGHT version only: colors that were written for dark themes ---- */
 html[data-theme=pulsix] .nav button:hover { background: rgba(47,47,47,.08); }
 html[data-theme=pulsix] .btn.ghost { background: rgba(47,47,47,.07); }
 html[data-theme=pulsix] .btn.ghost:hover { background: rgba(47,47,47,.15); }
@@ -848,7 +835,7 @@ html[data-theme=pulsix] .sw[aria-checked=true] { background: var(--mint); }
     </div>
  
     <footer>
-      Welcome to the new site! Made with &lt;3 by NKC.<br>
+      Welcome to pulsixgames! Made by NKC.<br>
       <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSehIZWpUlPu8cv4Ew4hIhjYopDhIsQwGViUc1NYf9YrvBGecA/viewform?usp=dialog">Request a game or send feedback</a><br>
     </footer>
   </main>
@@ -889,8 +876,8 @@ html[data-theme=pulsix] .sw[aria-checked=true] { background: var(--mint); }
       <div class="set">
         <div class="sl"><b>Theme</b><span>Change the look of the whole site.</span></div>
         <div class="pals">
-          <button class="pal" data-t="pulsix"><i style="background:repeating-linear-gradient(135deg,#fff 0 5px,#2f2f2f 5px 7px)"></i><span class="nm">PULSIX RULES<small>WHITE</small></span></button>
-          <button class="pal" data-t="pulsixblack"><i style="background:repeating-linear-gradient(135deg,#000 0 5px,#f2f2f2 5px 7px)"></i><span class="nm">PULSIX RULES<small>BLACK</small></span></button>
+          <button class="pal" data-t="pulsix"><i style="background:repeating-linear-gradient(135deg,#fff 0 5px,#2f2f2f 5px 7px)"></i><span class="nm">PULSIX RULES<small>LIGHT</small></span></button>
+          <button class="pal" data-t="pulsixblack"><i style="background:repeating-linear-gradient(135deg,#000 0 5px,#f2f2f2 5px 7px)"></i><span class="nm">PULSIX RULES<small>DARK</small></span></button>
           <button class="pal" data-t="neon"><i style="background:linear-gradient(135deg,#ff8a4c,#ff5fa2 55%,#6a4cff)"></i>Neon</button>
           <button class="pal" data-t="black"><i style="background:linear-gradient(135deg,#fff,#4a4a50)"></i>Black</button>
           <button class="pal" data-t="blue"><i style="background:linear-gradient(135deg,#9fd0ff,#2b57ff)"></i>Blue</button>
@@ -1190,58 +1177,26 @@ setInterval(() => {
   wobbleNoise.setAttribute('baseFrequency', wobbleSeed % 2 ? '0.03 0.045' : '0.045 0.03');
 }, 125);
  
-// every 10 seconds one column of text speeds up like crazy, then slows back down and settles in line with the other columns.
-// Only the TEXT lights up (no box), and it stays "TV": blurred, scanline-cut, shaky, flickering, with ghost copies.
-const COL_W = 420, ROW_H = 64, SCROLL_MS = 9000;   // must match the background tile size and scroll time
-function fastColumn() {
+// every 10 seconds the square tiles really speed up: the background scroll itself accelerates,
+// then eases back down to its normal pace. (No flicker, blur or scanlines, just faster tiles.)
+const SPEED_DUR = 2600, SPEED_PEAK = 20;   // how long it lasts (ms) and how many times faster the scroll gets
+function speedUp() {
   if (document.hidden || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const root = document.documentElement;
   if (!root.hasAttribute('data-fx') || root.classList.contains('no-glitch') || document.body.classList.contains('playing')) return;
-  const bg = document.querySelector('.bg');
-  const scroll = bg.getAnimations().find(a => a.animationName === 'tileScroll');
+  const scroll = document.querySelector('.bg').getAnimations().find(a => a.animationName === 'tileScroll');
   if (!scroll) return;
  
-  const phase = ((scroll.currentTime % SCROLL_MS) / SCROLL_MS) * ROW_H;       // how far the text has scrolled up so far
-  const k = Math.floor(Math.random() * Math.ceil(innerWidth / COL_W));        // which column
-  const DUR = 1600;
-  const dist = -ROW_H * 30;                                                   // whole rows, so it lands perfectly lined up
- 
-  // the column is just an invisible holder; it has three layers of text: the main one and two ghost copies
-  const col = document.createElement('div');
-  col.className = 'colfx';
-  col.style.left = (k * COL_W) + 'px';
-  const layers = [[0, 1], [-5, .45], [5, .45]].map(([dx, strength]) => {      // [sideways offset, brightness]
-    const u = document.createElement('u');
-    u.style.backgroundPosition = `${dx}px ${-phase}px`;                       // start exactly in step with the other columns
-    col.append(u);
-    return { u, strength };
-  });
-  bg.append(col);
- 
-  const fast  = [{ backgroundPositionY: '0px' }, { backgroundPositionY: dist + 'px' }];
-  const drift = [{ backgroundPositionY: '0px' }, { backgroundPositionY: -(DUR / SCROLL_MS) * ROW_H + 'px' }];
-  const fastOpts  = { duration: DUR, easing: 'cubic-bezier(.05,.9,.25,1)', fill: 'forwards', composite: 'add' };   // starts super fast, then eases in
-  const driftOpts = { duration: DUR, easing: 'linear', fill: 'forwards', composite: 'add' };                      // keeps pace with the normal scroll
- 
-  const hard = 'steps(1, end)';
-  const flicker = s => [                                                      // TV flicker, then fade out
-    { opacity: s, offset: 0, easing: hard },        { opacity: .45 * s, offset: .08, easing: hard },
-    { opacity: s, offset: .15, easing: hard },      { opacity: .6 * s, offset: .27, easing: hard },
-    { opacity: s, offset: .36, easing: hard },      { opacity: .35 * s, offset: .5, easing: hard },
-    { opacity: .9 * s, offset: .58, easing: hard }, { opacity: .5 * s, offset: .7, easing: hard },
-    { opacity: .8 * s, offset: .78 },               { opacity: 0, offset: 1 }
-  ];
-  const shake = [0, -4, 5, -3, 4, -5, 3, -2, 2, -1, 1, 0].map(x => ({ transform: `translateX(${x}px)`, easing: hard }));
- 
-  const anims = [col.animate(shake, { duration: DUR, fill: 'forwards' })];
-  layers.forEach(({ u, strength }, i) => {
-    anims.push(u.animate(fast, fastOpts), u.animate(drift, driftOpts), u.animate(flicker(strength), { duration: DUR, fill: 'forwards' }));
-    if (i === 0) anims.push(u.animate([{ filter: 'blur(3px)' }, { filter: 'blur(1.2px)', offset: .6 }, { filter: 'blur(.6px)' }], { duration: DUR, fill: 'forwards' }));
-  });
-  Promise.all(anims.map(a => a.finished)).then(() => col.remove()).catch(() => col.remove());
+  const t0 = performance.now();
+  (function step(now) {
+    const p = Math.min(Math.max((now - t0) / SPEED_DUR, 0), 1);               // 0 to 1 (clamped: the frame time can be a hair before t0)
+    const bell = Math.pow(Math.sin(Math.PI * Math.pow(p, .6)), 2);            // quick surge up, long ease back down
+    scroll.playbackRate = Number.isFinite(bell) ? 1 + (SPEED_PEAK - 1) * bell : 1;
+    if (p < 1) requestAnimationFrame(step); else scroll.playbackRate = 1;
+  })(t0);
 }
-setTimeout(fastColumn, 5000);
-setInterval(fastColumn, 10000);
+setTimeout(speedUp, 5000);
+setInterval(speedUp, 10000);
  
 const openSettings  = () => $('#settings').classList.add('open');
 const closeSettings = () => $('#settings').classList.remove('open');
