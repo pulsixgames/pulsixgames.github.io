@@ -202,20 +202,17 @@ h1 { font-size: clamp(2.4rem, 8vw, 3.2rem); margin-bottom: 26px; }
 /* ==========================================================================
    8. PULSIX RULES LOOK  (white, glitchy, jittery lines — same as the main site's default theme)
    ========================================================================== */
-:root { --tile-strong: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='64'%3E%3Ctext x='210' y='48' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='48' text-anchor='middle' fill='%232f2f2f' fill-opacity='.9'%3EPULSIX RULES%3C/text%3E%3C/svg%3E"); --tile-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='64'%3E%3Ctext x='210' y='48' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='48' text-anchor='middle' fill='%232f2f2f' fill-opacity='.075'%3EPULSIX RULES%3C/text%3E%3C/svg%3E"); --tile-lite: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='46'%3E%3Ctext x='210' y='35' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='34' text-anchor='middle' fill='%23ffffff'%3EPULSIX RULES%3C/text%3E%3C/svg%3E"); }
+:root { --tile-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect x='10' y='10' width='44' height='44' fill='%232f2f2f' fill-opacity='.075'/%3E%3C/svg%3E"); --tile-lite: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='46'%3E%3Ctext x='210' y='35' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='34' text-anchor='middle' fill='%23ffffff'%3EPULSIX RULES%3C/text%3E%3C/svg%3E"); }
  
 /* type */
 body, input, button, h1, h2, #random-text { font-family: 'Times New Roman', Times, Georgia, serif; }
 h1, h2 { text-transform: uppercase; letter-spacing: .04em; }
 .btn { font-weight: 700; }
  
-/* background: scrolling text tiles + glitch bands */
-.bg { background: var(--night) var(--tile-dark) 0 0 / 420px 64px; animation: tileScroll 9s linear infinite; }
+/* background: scrolling square tiles + glitch bands */
+.bg { background: var(--night) var(--tile-dark) 0 0 / 64px 64px; animation: tileScroll 9s linear infinite; }
 @keyframes tileScroll { to { background-position: 0 -64px; } }
 .bg i { border-radius: 0; filter: none; opacity: 0; left: 0; right: auto; bottom: auto; width: 100%; }
-/* a column that zooms upward every 10 seconds (made by the script at the bottom) */
-.colfx { position: absolute; top: 0; width: 420px; height: 100%; pointer-events: none; }   /* no background: only the text lights up */
-.colfx u { position: absolute; inset: 0; background: var(--tile-strong) 0 0 / 420px 64px; -webkit-mask-image: repeating-linear-gradient(0deg, #000 0 2px, transparent 2px 4px); mask-image: repeating-linear-gradient(0deg, #000 0 2px, transparent 2px 4px); }   /* TV scanlines cut through the text */
 .bg i:nth-child(1) { top: 40%; height: 46px; background: #000 var(--tile-lite) 0 0 / 420px 46px; animation: bandFlash 5.5s steps(1, end) infinite, bandSlide 2.5s linear infinite; }
 .bg i:nth-child(2) { top: 70%; height: 3px; background: #2f2f2f; animation: tearFlash 3.7s steps(1, end) -1.2s infinite; }
 .bg i:nth-child(3) { top: 15%; left: 60%; width: 22vw; height: 9vh; background: #2f2f2f; animation: blockFlash 7s steps(1, end) -3s infinite; }
@@ -302,7 +299,7 @@ h2 { animation: glitchText 3.9s steps(1, end) -1s infinite; }
    1. Cloak (opens the about:blank tab + the Go Home button inside it)
    2. Random quotes
    3. Password screen
-   4. Jittery lines + the column that speeds up
+   4. Jittery lines + the tile speed-up
    ========================================================================== */
  
  
@@ -438,7 +435,7 @@ document.getElementById('passwordInput').addEventListener('keydown', e => { if (
  
  
 /* ==========================================================================
-   4. JITTERY LINES  (re-seeds the wobble filter ~8 times a second)
+   4. JITTERY LINES  (re-seeds the wobble filter ~8 times a second) + the tile speed-up
    ========================================================================== */
 const wobbleNoise = document.getElementById('wobbleNoise');
 let wobbleSeed = 1;
@@ -449,56 +446,24 @@ setInterval(() => {
   wobbleNoise.setAttribute('baseFrequency', wobbleSeed % 2 ? '0.03 0.045' : '0.045 0.03');
 }, 125);
  
-// every 10 seconds one column of text speeds up like crazy, then slows back down and settles in line with the other columns.
-// Only the TEXT lights up (no box), and it stays "TV": blurred, scanline-cut, shaky, flickering, with ghost copies.
-const COL_W = 420, ROW_H = 64, SCROLL_MS = 9000;   // must match the background tile size and scroll time
-function fastColumn() {
+// every 10 seconds the square tiles really speed up: the background scroll itself accelerates,
+// then eases back down to its normal pace. (No flicker, blur or scanlines, just faster tiles.)
+const SPEED_DUR = 2600, SPEED_PEAK = 20;   // how long it lasts (ms) and how many times faster the scroll gets
+function speedUp() {
   if (document.hidden || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const bg = document.querySelector('.bg');
-  const scroll = bg.getAnimations().find(a => a.animationName === 'tileScroll');
+  const scroll = document.querySelector('.bg').getAnimations().find(a => a.animationName === 'tileScroll');
   if (!scroll) return;
  
-  const phase = ((scroll.currentTime % SCROLL_MS) / SCROLL_MS) * ROW_H;       // how far the text has scrolled up so far
-  const k = Math.floor(Math.random() * Math.ceil(innerWidth / COL_W));        // which column
-  const DUR = 1600;
-  const dist = -ROW_H * 30;                                                   // whole rows, so it lands perfectly lined up
- 
-  // the column is just an invisible holder; it has three layers of text: the main one and two ghost copies
-  const col = document.createElement('div');
-  col.className = 'colfx';
-  col.style.left = (k * COL_W) + 'px';
-  const layers = [[0, 1], [-5, .45], [5, .45]].map(([dx, strength]) => {      // [sideways offset, brightness]
-    const u = document.createElement('u');
-    u.style.backgroundPosition = `${dx}px ${-phase}px`;                       // start exactly in step with the other columns
-    col.append(u);
-    return { u, strength };
-  });
-  bg.append(col);
- 
-  const fast  = [{ backgroundPositionY: '0px' }, { backgroundPositionY: dist + 'px' }];
-  const drift = [{ backgroundPositionY: '0px' }, { backgroundPositionY: -(DUR / SCROLL_MS) * ROW_H + 'px' }];
-  const fastOpts  = { duration: DUR, easing: 'cubic-bezier(.05,.9,.25,1)', fill: 'forwards', composite: 'add' };   // starts super fast, then eases in
-  const driftOpts = { duration: DUR, easing: 'linear', fill: 'forwards', composite: 'add' };                      // keeps pace with the normal scroll
- 
-  const hard = 'steps(1, end)';
-  const flicker = s => [                                                      // TV flicker, then fade out
-    { opacity: s, offset: 0, easing: hard },        { opacity: .45 * s, offset: .08, easing: hard },
-    { opacity: s, offset: .15, easing: hard },      { opacity: .6 * s, offset: .27, easing: hard },
-    { opacity: s, offset: .36, easing: hard },      { opacity: .35 * s, offset: .5, easing: hard },
-    { opacity: .9 * s, offset: .58, easing: hard }, { opacity: .5 * s, offset: .7, easing: hard },
-    { opacity: .8 * s, offset: .78 },               { opacity: 0, offset: 1 }
-  ];
-  const shake = [0, -4, 5, -3, 4, -5, 3, -2, 2, -1, 1, 0].map(x => ({ transform: `translateX(${x}px)`, easing: hard }));
- 
-  const anims = [col.animate(shake, { duration: DUR, fill: 'forwards' })];
-  layers.forEach(({ u, strength }, i) => {
-    anims.push(u.animate(fast, fastOpts), u.animate(drift, driftOpts), u.animate(flicker(strength), { duration: DUR, fill: 'forwards' }));
-    if (i === 0) anims.push(u.animate([{ filter: 'blur(3px)' }, { filter: 'blur(1.2px)', offset: .6 }, { filter: 'blur(.6px)' }], { duration: DUR, fill: 'forwards' }));
-  });
-  Promise.all(anims.map(a => a.finished)).then(() => col.remove()).catch(() => col.remove());
+  const t0 = performance.now();
+  (function step(now) {
+    const p = Math.min(Math.max((now - t0) / SPEED_DUR, 0), 1);               // 0 to 1 (clamped: the frame time can be a hair before t0)
+    const bell = Math.pow(Math.sin(Math.PI * Math.pow(p, .6)), 2);            // quick surge up, long ease back down
+    scroll.playbackRate = Number.isFinite(bell) ? 1 + (SPEED_PEAK - 1) * bell : 1;
+    if (p < 1) requestAnimationFrame(step); else scroll.playbackRate = 1;
+  })(t0);
 }
-setTimeout(fastColumn, 5000);
-setInterval(fastColumn, 10000);
+setTimeout(speedUp, 5000);
+setInterval(speedUp, 10000);
 </script>
  
 </body>
