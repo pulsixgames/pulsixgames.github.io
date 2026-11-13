@@ -28,7 +28,7 @@
   <style>
 /* ==========================================================================
    TABLE OF CONTENTS
-   1. Fonts & colors     4. Cards (password + selector)   7. Pulse   8. PULSIX RULES look
+   1. Fonts & colors     4. Cards (password + selector)   7. Pulse   8. Extra polish
    2. Base               5. Inputs & buttons
    3. Background         6. Text & small details
    ========================================================================== */
@@ -40,14 +40,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=DM+Sans:wght@400;500;600&display=swap');
  
 :root {
-  --night: #ffffff;
-  --plum:  #f1f1f1;
-  --line:  #2f2f2f;
-  --text:  #2f2f2f;
-  --dim:   #5a5a5a;
-  --orange:#2f2f2f;
-  --pink:  #0a0a0a;
-  --mint:  #2f2f2f;
+  --night: #0a0a0a;                 /* same as the Black theme on the main site */
+  --plum:  #161616;
+  --line:  rgba(255,255,255,.12);
+  --text:  #f2f2f2;
+  --dim:   #a1a1a6;
+  --orange:#ffffff;
+  --pink:  #b4b4ba;
+  --mint:  #e6e6e8;
+  --blob1: #4a4a50;
+  --blob2: #2e2e33;
+  --blob3: #55555c;
+  --glow:  180,180,190;
+  --on:    #0a0a0a;
 }
  
  
@@ -89,6 +94,9 @@ body {
   animation: drift 26s ease-in-out infinite alternate;
 }
 @keyframes drift { to { transform: translate(8vw, 6vh) scale(1.15); } }
+.bg i:nth-child(1) { width: 46vw; height: 46vw; background: var(--blob1); top: -14vw;    left: -10vw; }
+.bg i:nth-child(2) { width: 40vw; height: 40vw; background: var(--blob2); bottom: -16vw; right: -8vw;  animation-delay: -9s;  opacity: .38; }
+.bg i:nth-child(3) { width: 34vw; height: 34vw; background: var(--blob3); top: 30%;      left: 45%;    animation-delay: -16s; opacity: .35; }
  
  
 /* ==========================================================================
@@ -98,13 +106,13 @@ body {
   position: relative; z-index: 1;
   width: 100%; max-width: 440px;
   margin: auto;                                      /* centers it both ways */
-  background: #ffffff;
+  background: var(--plum);
   backdrop-filter: blur(20px);
   border: 1px solid var(--line);
   border-radius: 30px;
   padding: 40px 36px;
   text-align: center;
-  box-shadow: 8px 8px 0 #2f2f2f;
+  box-shadow: 0 30px 60px rgba(0,0,0,.5);
   animation: rise .6s ease-out;
 }
 .box.shake { animation: shake .4s ease; }          /* wrong password */
@@ -121,7 +129,7 @@ input {
   padding: 14px 18px;
   border-radius: 16px;
   border: 1px solid var(--line);
-  background: #ffffff;
+  background: rgba(255,255,255,.07);
   color: var(--text);
   font: 500 1rem 'DM Sans';
   text-align: center;
@@ -130,9 +138,9 @@ input {
 input::placeholder { color: var(--dim); }
 input:focus {
   outline: none;
-  border-color: #2f2f2f;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(47,47,47,.15);
+  border-color: var(--mint);
+  background: rgba(255,255,255,.1);
+  box-shadow: 0 0 0 3px rgba(230,230,232,.18);
 }
  
 .btn {
@@ -143,11 +151,11 @@ input:focus {
   border-radius: 16px;
   font-weight: 600;
   background: linear-gradient(135deg, var(--orange), var(--pink));
-  color: #ffffff;
+  color: var(--on);
   transition: transform .4s cubic-bezier(.3,1.7,.5,1), box-shadow .25s, color .25s, filter .2s;
   -webkit-tap-highlight-color: transparent;
 }
-.btn:hover  { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(47,47,47,.4); }
+.btn:hover  { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(var(--glow), .4); }
 .btn:active { transform: scale(.9) translateY(1px); filter: brightness(.88); transition-duration: .08s; }
  
 #btn-wrap button { margin-top: 16px; }
@@ -175,7 +183,7 @@ h1, h2 { font-family: 'Bricolage Grotesque'; font-weight: 800; color: var(--text
 h2 { font-size: 2rem; margin-bottom: 22px; }
 h1 { font-size: clamp(2.4rem, 8vw, 3.2rem); margin-bottom: 26px; }
  
-#error { color: #b00020; margin-top: 14px; font-size: .9rem; opacity: 0; transform: translateY(-4px); transition: opacity .3s, transform .3s; }
+#error { color: #ff8fa8; margin-top: 14px; font-size: .9rem; opacity: 0; transform: translateY(-4px); transition: opacity .3s, transform .3s; }
 #error.show { opacity: 1; transform: none; }
  
 #random-text {
@@ -200,72 +208,33 @@ h1 { font-size: clamp(2.4rem, 8vw, 3.2rem); margin-bottom: 26px; }
    ========================================================================== */
 .bg::before, .bg::after { content: ""; position: absolute; inset: -25%; pointer-events: none; }
 .bg::after {
-  background: radial-gradient(circle, transparent 38%, rgba(47,47,47,.09) 58%, transparent 76%);
+  background: radial-gradient(circle, transparent 38%, rgba(255,255,255,.075) 58%, transparent 76%);
   animation: beatRing .6667s cubic-bezier(.3,.6,.4,1) infinite;
 }
 .bg::before {
-  background: radial-gradient(circle at center, rgba(47,47,47,.06), transparent 45%);
+  background: radial-gradient(circle at center, rgba(255,255,255,.05), transparent 45%);
   animation: beatGlow .6667s ease-out infinite;
 }
 @keyframes beatRing { 0% { transform: scale(1.35); opacity: 0; } 25% { opacity: 1; } 100% { transform: scale(.6); opacity: 0; } }
 @keyframes beatGlow { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
 /* ==========================================================================
-   8. PULSIX RULES LOOK  (white, glitchy, jittery lines — same as the main site's default theme)
+   8. EXTRA POLISH  (cooler UI: spotlight, 3D tilt, button shine)
    ========================================================================== */
-:root { --tile-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect x='10' y='10' width='44' height='44' fill='%232f2f2f' fill-opacity='.075'/%3E%3C/svg%3E"); --tile-lite: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='46'%3E%3Ctext x='210' y='35' font-family='Times New Roman,Times,serif' font-weight='bold' font-size='34' text-anchor='middle' fill='%23ffffff'%3EPULSIX RULES%3C/text%3E%3C/svg%3E"); }
- 
-/* type */
-body, input, button, h1, h2, #random-text { font-family: 'Times New Roman', Times, Georgia, serif; }
-h1, h2 { text-transform: uppercase; letter-spacing: .04em; }
-.btn { font-weight: 700; }
- 
-/* background: scrolling square tiles + glitch bands */
-.bg { background: var(--night) var(--tile-dark) 0 0 / 64px 64px; animation: tileScroll 9s linear infinite; }
-@keyframes tileScroll { to { background-position: 0 -64px; } }
-.bg i { border-radius: 0; filter: none; opacity: 0; left: 0; right: auto; bottom: auto; width: 100%; }
-.bg i:nth-child(1) { top: 40%; height: 46px; background: #000 var(--tile-lite) 0 0 / 420px 46px; animation: bandFlash 5.5s steps(1, end) infinite, bandSlide 2.5s linear infinite; }
-.bg i:nth-child(2) { top: 70%; height: 3px; background: #2f2f2f; animation: tearFlash 3.7s steps(1, end) -1.2s infinite; }
-.bg i:nth-child(3) { top: 15%; left: 60%; width: 22vw; height: 9vh; background: #2f2f2f; animation: blockFlash 7s steps(1, end) -3s infinite; }
-@keyframes bandSlide { to { background-position: 420px 0; } }
-@keyframes bandFlash {
-  0%, 60% { opacity: 0; top: 30%; height: 46px; } 61% { opacity: 1; top: 30%; } 63% { opacity: 0; }
-  64% { opacity: 1; top: 58%; } 67% { opacity: 0; }
-  82% { opacity: 1; top: 12%; height: 62px; } 84% { opacity: 1; top: 12%; height: 22px; } 86%, 100% { opacity: 0; }
+/* mouse spotlight + the cards lean toward the mouse (--sx / --sy / --tx / --ty are set by the script) */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(320px circle at var(--sx, 50%) var(--sy, 40%), rgba(255,255,255,.08), transparent 70%);
 }
-@keyframes tearFlash {
-  0%, 40% { opacity: 0; top: 70%; } 41% { opacity: 1; top: 22%; } 42% { opacity: 0; }
-  55% { opacity: 1; top: 81%; height: 6px; } 56% { opacity: 0; } 90% { opacity: 1; top: 47%; height: 2px; } 91%, 100% { opacity: 0; }
-}
-@keyframes blockFlash {
-  0%, 70% { opacity: 0; } 71% { opacity: .9; top: 15%; left: 60%; } 72% { opacity: 0; }
-  73% { opacity: .9; top: 64%; left: 8%; width: 30vw; height: 5vh; } 75% { opacity: 0; }
-  93% { opacity: .9; top: 36%; left: 78%; width: 14vw; height: 14vh; } 94%, 100% { opacity: 0; }
-}
+.box { transform: perspective(900px) rotateX(var(--ty, 0deg)) rotateY(var(--tx, 0deg)); transition: transform .25s ease-out; }
  
-/* CRT scanlines */
-body::after {
-  content: ""; position: fixed; inset: 0; z-index: 90; pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 1px, transparent 1px 3px);
-  animation: scanFlicker 6s steps(1, end) infinite;
+/* buttons: light sheen sweeps across on hover */
+.btn { position: relative; overflow: hidden; }   /* position: relative keeps the shine inside the button */
+.btn::after {
+  content: ""; position: absolute; top: 0; left: -80%; width: 45%; height: 100%; pointer-events: none;
+  background: linear-gradient(115deg, transparent, rgba(255,255,255,.4), transparent);
+  transform: skewX(-18deg); transition: left .6s ease;
 }
-@keyframes scanFlicker { 0%, 92%, 100% { opacity: 1; } 93% { opacity: .2; } 95% { opacity: 1; } 96% { opacity: .4; } }
- 
-/* glitching headings */
-@keyframes glitchText {
-  0%, 90%, 100% { transform: none; text-shadow: none; clip-path: none; }
-  91% { transform: translate(-4px, 0) skewX(-8deg); text-shadow: 3px 0 #8a8a8a, -3px 0 #cfcfcf; clip-path: inset(0 0 55% 0); }
-  92% { transform: translate(5px, 1px); text-shadow: -3px 0 #8a8a8a; clip-path: inset(45% 0 0 0); }
-  93% { transform: translate(-2px, -1px) skewX(6deg); text-shadow: 2px 0 #8a8a8a; clip-path: none; }
-  94% { transform: none; text-shadow: none; }
-}
-h1 { animation: glitchText 3.3s steps(1, end) infinite; }
-h2 { animation: glitchText 3.9s steps(1, end) -1s infinite; }
- 
-/* jittery lines: wobbling frame on the cards and buttons */
-.box, .btn { position: relative; }
-.box::before, .btn::before { content: ""; position: absolute; inset: 2px; z-index: 3; border: 2px solid #2f2f2f; border-radius: inherit; pointer-events: none; filter: url(#wobble); }
-.box.shake::before { filter: none; }
-.nofix a:hover { text-decoration: underline wavy; }
+.btn:hover::after { left: 130%; }
   </style>
 </head>
  
@@ -273,13 +242,6 @@ h2 { animation: glitchText 3.9s steps(1, end) -1s infinite; }
 <!-- ============================ 3. PAGE ============================ -->
 <body>
  
-  <!-- jittery-line filter (its seed is changed by the script at the bottom) -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <filter id="wobble" x="-5%" y="-5%" width="110%" height="110%">
-      <feTurbulence id="wobbleNoise" type="fractalNoise" baseFrequency="0.03 0.045" numOctaves="2" seed="1" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </svg>
  
   <div class="bg"><i></i><i></i><i></i></div>
  
@@ -309,7 +271,7 @@ h2 { animation: glitchText 3.9s steps(1, end) -1s infinite; }
    1. Cloak (opens the about:blank tab + the Go Home button inside it)
    2. Random quotes
    3. Password screen
-   4. Jittery lines + the tile speed-up
+   4. Mouse effects (spotlight + tilt)
    ========================================================================== */
  
  
@@ -338,7 +300,7 @@ document.head.appendChild(favicon);
 /* Go Home button: liquid glass, top right, 40px, same center line as the site's back-to-top arrow */
 const style = document.createElement('style');
 style.textContent = \`
-  body { margin: 0; background: #ffffff; }
+  body { margin: 0; background: #0a0a0a; }
   iframe { width: 100vw; height: 100vh; border: none; }
  
   #go-home-btn {
@@ -398,32 +360,37 @@ document.getElementById('bypass-button').addEventListener('click', () => launchC
    2. RANDOM QUOTES  (add or remove lines freely)
    ========================================================================== */
 const randomTexts = [
-  "Welcome back!",
+  "Welcome to pulsixgames!",
   "Don't let the teachers catch ya!",
-  "I've got my eye on you...",
   "Would you rather play video games or do your school work? I know which one you chose.",
   "Does anyone want to hop on some games?",
   "I have a dream that every kid will be able to play video games in school.",
-  "Fun Fact: This text has a 1 in 1,000,000 chance of appearing! Edit: No it doesn't that's a lie.",
-  "Fun Fact: This text has a 1 in 12 chance of appearing! Edit: It really does and it's not a lie.",
-  "This text appearing 1 out of 12 times means there are 11 other quotes like this waiting to be discovered!",
-  ".(emit-eerf evah uoy sselun) krow ruoy oD",
-  "Special thanks to you!",
+  "This is a better version of classroomhaas, so enjoy!",
   "Recommend some games you like using the request form!"
 ];
  
  
 /* ==========================================================================
    3. PASSWORD SCREEN
-   "pulsixrules, lebronjames" -> Cloak Selector     "secret" -> cloak straight away
+   "halltheballs" -> Cloak Selector     "secret" -> cloak straight away
    ========================================================================== */
+// types a line out one letter at a time (the box keeps its final height so it doesn't jump)
+function typeText(el, text) {
+  el.textContent = text;
+  el.style.minHeight = el.offsetHeight + 'px';
+  el.textContent = '';
+  let i = 0;
+  const tick = () => { el.textContent = text.slice(0, ++i); if (i < text.length) setTimeout(tick, 28); };
+  tick();
+}
+ 
 function unlockSite() {
   const gate = document.getElementById('gate');
   gate.classList.add('out');
   setTimeout(() => {
     gate.style.display = 'none';
     document.getElementById('realContent').style.display = 'block';
-    document.getElementById('random-text').textContent = randomTexts[Math.floor(Math.random() * randomTexts.length)];
+    typeText(document.getElementById('random-text'), randomTexts[Math.floor(Math.random() * randomTexts.length)]);
   }, 300);
 }
  
@@ -447,35 +414,17 @@ document.getElementById('passwordInput').addEventListener('keydown', e => { if (
  
  
 /* ==========================================================================
-   4. JITTERY LINES  (re-seeds the wobble filter ~8 times a second) + the tile speed-up
+   4. MOUSE EFFECTS  (spotlight + the boxes leaning toward the mouse)
    ========================================================================== */
-const wobbleNoise = document.getElementById('wobbleNoise');
-let wobbleSeed = 1;
-setInterval(() => {
-  if (document.hidden) return;
-  wobbleSeed = wobbleSeed % 40 + 1;
-  wobbleNoise.setAttribute('seed', wobbleSeed);
-  wobbleNoise.setAttribute('baseFrequency', wobbleSeed % 2 ? '0.03 0.045' : '0.045 0.03');
-}, 125);
+// mouse spotlight + the boxes lean toward the mouse
+addEventListener('pointermove', e => {
+  const st = document.body.style;
+  st.setProperty('--sx', e.clientX + 'px');
+  st.setProperty('--sy', e.clientY + 'px');
+  st.setProperty('--tx', (e.clientX / innerWidth - .5) * 8 + 'deg');
+  st.setProperty('--ty', (e.clientY / innerHeight - .5) * -8 + 'deg');
+});
  
-// every 10 seconds the square tiles really speed up: the background scroll itself accelerates,
-// then eases back down to its normal pace. (No flicker, blur or scanlines, just faster tiles.)
-const SPEED_DUR = 2600, SPEED_PEAK = 20;   // how long it lasts (ms) and how many times faster the scroll gets
-function speedUp() {
-  if (document.hidden || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const scroll = document.querySelector('.bg').getAnimations().find(a => a.animationName === 'tileScroll');
-  if (!scroll) return;
- 
-  const t0 = performance.now();
-  (function step(now) {
-    const p = Math.min(Math.max((now - t0) / SPEED_DUR, 0), 1);               // 0 to 1 (clamped: the frame time can be a hair before t0)
-    const bell = Math.pow(Math.sin(Math.PI * Math.pow(p, .6)), 2);            // quick surge up, long ease back down
-    scroll.playbackRate = Number.isFinite(bell) ? 1 + (SPEED_PEAK - 1) * bell : 1;
-    if (p < 1) requestAnimationFrame(step); else scroll.playbackRate = 1;
-  })(t0);
-}
-setTimeout(speedUp, 5000);
-setInterval(speedUp, 10000);
 </script>
  
 </body>
