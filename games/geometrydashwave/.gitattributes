@@ -1,0 +1,5 @@
+* text=auto
+*.part* binary
+*.wasm binary
+*.br binary
+*.gif binary

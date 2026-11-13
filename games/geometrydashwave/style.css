@@ -1,0 +1,85 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #070707;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  overscroll-behavior: none;
+  user-select: none;
+  touch-action: none;
+}
+
+#unity-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #070707;
+}
+
+#unity-canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background: #111;
+  outline: none;
+}
+
+#loading-cover {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #070707;
+  transition: opacity 220ms ease;
+}
+
+#loading-cover.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#unity-loading-bar {
+  width: min(320px, 76vw);
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+}
+
+#unity-logo img {
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+}
+
+#unity-progress-bar-empty {
+  width: 100%;
+  height: 14px;
+  border: 1px solid rgba(255, 40, 40, 0.75);
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+#unity-progress-bar-full {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: #ff2525;
+  transition: width 180ms ease;
+}
+
+#loading-message {
+  min-height: 20px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.78);
+  text-align: center;
+}
