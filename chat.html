@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- 
+
   <!-- =====================================================
        chat.html  —  room chat, styled like site.html
        Sections:  1 Head  ·  2 Styles  ·  3 Sidebar  ·  4 Chat
-                  5 Windows (password + join)  ·  6 Script
+                  5 Windows (join)  ·  6 Script
        ===================================================== -->
- 
+
   <!-- 1. HEAD -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Chat</title>
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
- 
+
   <!-- Use the theme chosen on the main site (Settings), before the page paints -->
   <script>
     try {
@@ -24,14 +24,14 @@
       if (s.glow === false) r.classList.add("no-glow");
     } catch (e) {}
   </script>
- 
+
   <!-- 2. STYLES -->
   <style>
 /* ==========================================================================
    1. FONTS & THEME VARIABLES  (same themes as site.html)
    ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;600&display=swap');
- 
+
 :root {   /* PULSIX RULES light colors */
   --night:#ffffff; --plum:#f1f1f1; --card:#ffffff; --line:#2f2f2f; --text:#2f2f2f; --dim:#5a5a5a;
   --orange:#2f2f2f; --pink:#0a0a0a; --mint:#2f2f2f; --r:22px;
@@ -63,13 +63,13 @@ html[data-theme=pink] {
   --orange:#ffc2dd; --pink:#ff4d94; --mint:#ffb3d4; --blob1:#ff4d94; --blob2:#a02a68; --blob3:#ff8fb8;
   --side:rgba(20,6,15,.72); --panel:rgba(52,24,40,.55); --glow:255,77,148; --on:#2a0716;
 }
- 
- 
+
+
 /* ==========================================================================
    2. BASE
    ========================================================================== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
   background: var(--night);
@@ -81,8 +81,8 @@ body {
 :focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
- 
- 
+
+
 /* ==========================================================================
    3. BACKGROUND  (drifting glows + 110 BPM pulse, same as site.html)
    ========================================================================== */
@@ -99,8 +99,8 @@ body {
 @keyframes beatGlow { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
 .no-pulse .bg::before, .no-pulse .bg::after { display: none; }
 .no-glow .bg i { animation: none; }
- 
- 
+
+
 /* ==========================================================================
    4. SIDEBAR
    ========================================================================== */
@@ -114,7 +114,7 @@ aside {
 }
 .logo { font: 800 1.5rem/1 'Bricolage Grotesque'; color: var(--text); padding: 4px 10px; white-space: nowrap; }
 .logo small { display: block; font: 500 .75rem 'DM Sans'; color: var(--dim); margin-top: 6px; }
- 
+
 .nav { display: flex; flex-direction: column; gap: 4px; margin-top: 18px; }
 .nav button {
   all: unset; box-sizing: border-box; cursor: pointer;
@@ -128,15 +128,15 @@ aside {
 .nav .sub { margin: 14px 14px 4px; font-size: .78rem; color: var(--dim); opacity: .7; }
 .nav .on, .nav .on:hover { background: var(--text); color: var(--night); font-weight: 600; }   /* the room you are in */
 .nav .on::after { content: "◀"; font-size: .7rem; }
- 
+
 .acct { margin-top: auto; border-top: 1px solid var(--line); padding-top: 14px; }
 .me { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; font-size: .9rem; }
 .dot { width: 9px; height: 9px; border-radius: 50%; background: #64748b; flex-shrink: 0; }
 .dot.green { background: #4ade80; }
 .dot.orange { background: #facc15; }
 .dot.red { background: #ef4444; }
- 
- 
+
+
 /* ==========================================================================
    5. BUTTONS + INPUTS
    ========================================================================== */
@@ -149,7 +149,7 @@ aside {
 .btn.main { background: linear-gradient(135deg, var(--orange), var(--pink)); color: var(--on); }
 .btn.main:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(var(--glow), .4); }
 .btn:active { transform: scale(.92) translateY(1px); filter: brightness(.88); transition-duration: .08s; }
- 
+
 input {
   width: 100%; padding: 12px 16px; border-radius: 14px;
   border: 1px solid var(--line); background: rgba(255,255,255,.07);
@@ -158,13 +158,13 @@ input {
 input::placeholder { color: var(--dim); }
 input:focus { outline: none; border-color: var(--mint); box-shadow: 0 0 0 4px rgba(var(--glow), .18); }
 html[data-theme=pulsix] input { background: #fff; }
- 
- 
+
+
 /* ==========================================================================
    6. CHAT  (messages + input bar)
    ========================================================================== */
 main { flex: 1; min-width: 0; position: relative; z-index: 10; padding: 26px clamp(16px, 3vw, 40px) 26px; display: flex; flex-direction: column; }
- 
+
 .chat {
   flex: 1; min-height: 0; display: flex; flex-direction: column;
   background: var(--panel); border: 1px solid var(--line); border-radius: var(--r);
@@ -172,7 +172,7 @@ main { flex: 1; min-width: 0; position: relative; z-index: 10; padding: 26px cla
 }
 .chat-head { padding: 18px 22px; border-bottom: 1px solid var(--line); padding-right: 80px; }   /* room for the Home button */
 .chat-head h2 { font: 800 1.6rem 'Bricolage Grotesque'; color: var(--text); letter-spacing: -.02em; }
- 
+
 #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; scrollbar-width: thin; }
 .msg-row { display: flex; flex-direction: column; max-width: 80%; animation: rise .3s ease both; }
 .msg-row.sent { align-self: flex-end; align-items: flex-end; }
@@ -182,13 +182,13 @@ main { flex: 1; min-width: 0; position: relative; z-index: 10; padding: 26px cla
 .sent .bubble { background: linear-gradient(135deg, var(--orange), var(--pink)); color: var(--on); border-bottom-right-radius: 4px; }
 .recv .bubble { background: var(--plum); color: var(--text); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
 .system { align-self: center; font-size: .78rem; color: var(--dim); margin: 6px 0; }
- 
+
 .bar { display: flex; gap: 10px; padding: 14px; border-top: 1px solid var(--line); }
 .bar .btn { flex-shrink: 0; width: 90px; }
- 
- 
+
+
 /* ==========================================================================
-   7. WINDOWS  (password + join, same look as the site's log in window)
+   7. WINDOWS  (join window, same look as the site's log in window)
    ========================================================================== */
 .modal {
   position: fixed; inset: 0; z-index: 100; padding: 16px;
@@ -197,9 +197,8 @@ main { flex: 1; min-width: 0; position: relative; z-index: 10; padding: 26px cla
   opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility 0s .3s;
 }
 .modal.open { opacity: 1; visibility: visible; transition: opacity .3s ease; }
-#gate { z-index: 120; }
 html[data-theme=pulsix] .modal { background: rgba(255,255,255,.75); }
- 
+
 .box {
   width: 100%; max-width: 380px; padding: 30px; color: var(--dim);
   background: var(--plum); border: 1px solid var(--line); border-radius: 26px;
@@ -210,14 +209,14 @@ html[data-theme=pulsix] .modal { background: rgba(255,255,255,.75); }
 .box p { font-size: .9rem; margin-bottom: 14px; }
 .box input { margin-bottom: 10px; }
 .box .btn { width: 100%; margin-top: 6px; }
- 
+
 .featured { margin-top: 20px; text-align: center; }
 .featured p { font-size: .82rem; margin-bottom: 10px; }
 .tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .tag { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); font-size: .85rem; cursor: pointer; color: var(--dim); transition: .2s; }
 .tag:hover { color: var(--text); border-color: var(--dim); }
- 
- 
+
+
 /* ==========================================================================
    8. SMALL SCREENS
    ========================================================================== */
@@ -231,19 +230,19 @@ html[data-theme=pulsix] .modal { background: rgba(255,255,255,.75); }
 }
   </style>
 </head>
- 
+
 <body>
- 
+
   <div class="bg"><i></i><i></i><i></i></div>
- 
- 
+
+
   <!-- ======================= 3. SIDEBAR ======================= -->
   <aside>
     <div class="logo">pulsixgames<small>chat</small></div>
- 
+
     <nav class="nav">
       <button id="back">← Back to games</button>
- 
+
       <div class="sub">Rooms</div>
       <button data-room="lobby"># lobby</button>
       <button data-room="gaming"># gaming</button>
@@ -251,11 +250,11 @@ html[data-theme=pulsix] .modal { background: rgba(255,255,255,.75); }
       <button data-room="random"># random</button>
       <button id="leave" style="display:none">Leave room</button>
     </nav>
- 
+
     <div class="acct"><div class="me"><span class="dot" id="status-dot"></span><span id="peer-count">Offline</span></div></div>
   </aside>
- 
- 
+
+
   <!-- ========================= 4. CHAT ========================= -->
   <main>
     <div class="chat">
@@ -267,20 +266,10 @@ html[data-theme=pulsix] .modal { background: rgba(255,255,255,.75); }
       </div>
     </div>
   </main>
- 
- 
+
+
   <!-- ======================= 5. WINDOWS ======================= -->
- 
-  <!-- site password -->
-  <div class="modal open" id="gate">
-    <div class="box">
-      <h3>Private access</h3>
-      <p>Enter the site password to continue.</p>
-      <input type="password" id="site-password" placeholder="Password">
-      <button class="btn main" onclick="checkSitePassword()">Unlock</button>
-    </div>
-  </div>
- 
+
   <!-- join a room -->
   <div class="modal open" id="login-screen">
     <div class="box">
@@ -289,7 +278,7 @@ html[data-theme=pulsix] .modal { background: rgba(255,255,255,.75); }
       <input type="text" id="username" placeholder="Nickname" maxlength="60">
       <input type="text" id="room" placeholder="Room name (e.g. lobby)">
       <button class="btn main" onclick="joinChat()">Start chatting</button>
- 
+
       <div class="featured">
         <p>Or join a popular space:</p>
         <div class="tags">
@@ -301,27 +290,24 @@ html[data-theme=pulsix] .modal { background: rgba(255,255,255,.75); }
       </div>
     </div>
   </div>
- 
- 
+
+
   <!-- ======================= 6. SCRIPT ======================= -->
   <script>
 /* ==========================================================================
    TABLE OF CONTENTS
-   1. Configuration (site password, banned words)
-   2. Password + quick join
+   1. Configuration (banned words)
+   2. Quick join
    3. Chat (rooms, connections, messages)
    ========================================================================== */
- 
+
 const $ = s => document.querySelector(s);
- 
- 
+
+
 /* ==========================================================================
    1. CONFIGURATION
    ========================================================================== */
- 
-// SET YOUR SITE PASSWORD HERE:
-const SITE_ACCESS_PASSWORD = "notlebronjames";
- 
+
 const BANNED_WORDS = [
   "nig", "nazi", "jew", "fag", "neg", "faggot", "n1g", "nigger", "naz1", "j3w", "f@g", "f a g",
   "n i g", "n a z i", "j e w", "retard", "coon", "c00n", "c o o n", "damm", "d4mm", "h3ll", "d-a-m-m", "d a m m ",
@@ -348,22 +334,13 @@ const BANNED_WORDS = [
   "joder", "zorra", "pendejo", "arse", "idiot", "sukkel", "id1ot", "1diot", "1d1ot", "idi0t", "id10t", "flikker",
   "ÿ", "ý", "vagina", "shi", "sh1", "5h", "uck", "4hit"
 ];
- 
- 
+
+
 /* ==========================================================================
-   2. PASSWORD + QUICK JOIN
+   2. QUICK JOIN
    ========================================================================== */
-function checkSitePassword() {
-  if ($('#site-password').value === SITE_ACCESS_PASSWORD) {
-    $('#gate').classList.remove('open');
-    setTimeout(() => $('#username').focus(), 300);
-  } else {
-    alert("Access Denied: Incorrect Password");
-    $('#site-password').value = '';
-  }
-}
-$('#site-password').addEventListener('keypress', e => { if (e.key === 'Enter') checkSitePassword(); });
- 
+setTimeout(() => $('#username').focus(), 300);
+
 // room buttons (sidebar + join window): fill in the room, then join if we already have a nickname
 function quickJoin(roomName) {
   if (peer) leaveRoom();
@@ -372,14 +349,14 @@ function quickJoin(roomName) {
   else $('#username').focus();
 }
 document.querySelectorAll('[data-room]').forEach(b => b.onclick = () => quickJoin(b.dataset.room));
- 
+
 // back to the games menu (works inside the site's game viewer or on its own)
 $('#back').onclick = () => {
   try { if (parent !== window) return parent.document.getElementById('homeBtn').click(); } catch (e) {}
   location.href = './site.html';
 };
- 
- 
+
+
 /* ==========================================================================
    3. CHAT
    ========================================================================== */
@@ -389,7 +366,7 @@ let connections = {};
 let seenIds = new Set();
 let isHost = false;
 let hostTimer;                 // waits for a host to answer, then we become the host ourselves
- 
+
 const peerConfig = {
   debug: 0,   // keeps PeerJS quiet in the console
   config: {
@@ -400,7 +377,7 @@ const peerConfig = {
     ]
   }
 };
- 
+
 function censorMessage(text) {
   let cleanText = text;
   BANNED_WORDS.forEach(word => {
@@ -409,15 +386,15 @@ function censorMessage(text) {
   });
   return cleanText;
 }
- 
+
 // highlights the sidebar button for the room you are in (none for a custom room name)
 const markRoom = name => document.querySelectorAll('[data-room]').forEach(b => b.classList.toggle('on', b.dataset.room === name));
- 
+
 function joinChat() {
   myName = $('#username').value.trim();
   const r = $('#room').value.trim().toLowerCase();
   if (!myName || !r) return alert("Nickname and Room are required!");
- 
+
   roomId = "chat-room-" + r.replace(/[^a-z0-9]/g, '');
   $('#room-display').textContent = "#" + r;
   $('#login-screen').classList.remove('open');
@@ -426,14 +403,14 @@ function joinChat() {
   setStatus("Connecting...", "orange");
   initPeer(false);
 }
- 
+
 function leaveRoom() {
   clearTimeout(hostTimer);
   if (peer) { peer.destroy(); peer = null; }
   connections = {};
   seenIds.clear();
   isHost = false;
- 
+
   $('#messages').innerHTML = '';
   $('#login-screen').classList.add('open');
   $('#leave').style.display = 'none';
@@ -442,13 +419,13 @@ function leaveRoom() {
   setStatus("Offline", "");
 }
 $('#leave').onclick = leaveRoom;
- 
+
 function initPeer(forceHost = false) {
   const id = forceHost ? roomId : null;
   clearTimeout(hostTimer);
   if (peer) peer.destroy();
   peer = new Peer(id, peerConfig);
- 
+
   peer.on('open', id => {
     myId = id;
     if (myId === roomId) {
@@ -459,9 +436,9 @@ function initPeer(forceHost = false) {
       connectToHost();
     }
   });
- 
+
   peer.on('connection', conn => setupConn(conn));
- 
+
   peer.on('error', err => {
     console.log("Peer Error:", err.type);
     if (err.type === 'unavailable-id') {
@@ -474,11 +451,11 @@ function initPeer(forceHost = false) {
     }
   });
 }
- 
+
 function broadcast(data) {
   Object.values(connections).forEach(c => { if (c.open) c.send(data); });
 }
- 
+
 // host only
 function broadcastSystem(message) {
   const payload = { id: Date.now() + Math.random().toString(), type: 'system', text: message };
@@ -486,69 +463,69 @@ function broadcastSystem(message) {
   broadcast(payload);
   renderSystemMessage(payload);
 }
- 
+
 function connectToHost() {
   setStatus("Finding Host...", "orange");
   const conn = peer.connect(roomId, { reliable: true });
   let connected = false;
- 
+
   conn.on('open', () => {
     connected = true;
     setStatus("Connected", "green");
     setupConn(conn);
   });
- 
+
   hostTimer = setTimeout(() => { if (!connected && !isHost) initPeer(true); }, 5000);
 }
- 
+
 function setupConn(c) {
   connections[c.peer] = c;
   updateCount();
- 
+
   if (isHost) broadcastSystem("A new user joined the chat.");
- 
+
   c.on('data', data => {
     if (seenIds.has(data.id)) return;
     seenIds.add(data.id);
- 
+
     if (data.type === 'system') return renderSystemMessage(data);
     if (isHost) broadcast(data);
     renderMessage(data);
   });
- 
+
   c.on('close', () => { delete connections[c.peer]; updateCount(); });
 }
- 
+
 function sendMessage() {
   const txt = $('#msg-input').value.trim();
   if (!txt) return;
- 
+
   const payload = { id: Date.now() + Math.random().toString(), name: myName, text: censorMessage(txt) };
   seenIds.add(payload.id);
   broadcast(payload);
   renderMessage(payload, true);
   $('#msg-input').value = '';
 }
- 
+
 // messages are shown with textContent, so nothing a user types can run as HTML
 function renderMessage(data, isMe = false) {
   const box = $('#messages');
   const row = document.createElement('div');
   row.className = `msg-row ${isMe ? 'sent' : 'recv'}`;
- 
+
   const name = document.createElement('div');
   name.className = 'sender-name';
   name.textContent = isMe ? 'You' : data.name;
- 
+
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   bubble.textContent = data.text;
- 
+
   row.append(name, bubble);
   box.appendChild(row);
   box.scrollTop = box.scrollHeight;
 }
- 
+
 function renderSystemMessage(data) {
   const box = $('#messages');
   const div = document.createElement('div');
@@ -557,17 +534,17 @@ function renderSystemMessage(data) {
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
- 
+
 function setStatus(msg, color) {
   $('#peer-count').textContent = msg;
   $('#status-dot').className = "dot " + color;
 }
- 
+
 function updateCount() {
   if (!isHost) return;
   $('#peer-count').textContent = `${Object.keys(connections).length} Peers Connected`;
 }
- 
+
 $('#msg-input').addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
   </script>
 </body>
