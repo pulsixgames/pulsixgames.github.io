@@ -205,7 +205,7 @@ html[data-theme=pulsix] .btn.ghost { background: rgba(47,47,47,.07); }
       <button id="back">← Back to games</button>
 
       <div class="sub">Quick links</div>
-      <button data-go="duckduckgo.com">DuckDuckGo</button>
+      <button data-go="html.duckduckgo.com/html/">DuckDuckGo</button>
       <button data-go="wikipedia.org">Wikipedia</button>
       <button data-go="news.ycombinator.com">Hacker News</button>
     </nav>
@@ -244,10 +244,10 @@ const $ = s => document.querySelector(s);
    SERVER = the address of your proxy server once it is online (see proxy-server.js),
    for example 'https://pulsix-proxy.onrender.com'  (no slash at the end).
    ========================================================================== */
-const SERVER = 'https://pulsix-proxy.onrender.com';
+const SERVER = '';
 const PROXY  = SERVER + '/proxy?url=';
 const PING   = SERVER + '/ping';
-const SEARCH = 'https://duckduckgo.com/html/?q=';   // used when you type words instead of an address
+const SEARCH = 'https://html.duckduckgo.com/html/?q=';   // used when you type words instead of an address
 
 
 /* ==========================================================================
