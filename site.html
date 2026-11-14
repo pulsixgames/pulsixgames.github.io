@@ -517,6 +517,14 @@ footer a { color: var(--mint); }
 #gameView iframe { display: block; width: 100%; height: 100%; border: 0; }
 body.playing { overflow: hidden; }
  
+/* while a game is open, freeze the menu behind it so the game gets all of the device's power */
+body.playing *, body.playing *::before, body.playing *::after { animation-play-state: paused !important; }
+body.playing::before, body.playing::after { display: none; }   /* spotlight + scanlines */
+body.playing aside, body.playing main, body.playing .bg, body.playing #prog, body.playing #toTop {
+  visibility: hidden;               /* the browser stops painting the menu (it keeps its place, so you return to the same spot) */
+  transition: visibility 0s .3s;    /* waits for the game to finish fading in */
+}
+ 
 /* ---- Home button (top right, liquid glass). Only shows while a game is open.
         right: 23px puts its center on the same line as the 42px arrow above (22 + 21 - 20) ---- */
 #homeBtn {
@@ -525,7 +533,7 @@ body.playing { overflow: hidden; }
   height: 40px; min-width: 40px; border-radius: 20px;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden; cursor: pointer;
-  color: #fff; mix-blend-mode: difference;   /* inverts against whatever is behind it, so it stays readable on every game */
+  color: var(--text);
   background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.34), rgba(255,255,255,.09) 55%, rgba(255,255,255,.04));
   backdrop-filter: blur(14px) saturate(170%);
   -webkit-backdrop-filter: blur(14px) saturate(170%);
@@ -818,7 +826,8 @@ html[data-fx] main { animation: boot .7s steps(14, end); }
       <button id="goLog">Changelog</button>
  
       <div class="sub">More</div>
-      <button id="random">🎲 Random game</button>
+      <button id="random">Random game 🎲</button>
+      <button id="chat">Chat 💬</button>
       <button id="openSettings">Settings <span class="gear">⚙</span></button>
     </nav>
  
@@ -1143,6 +1152,14 @@ const LOG = [
   ["Version 1.3 — August 13, 2026", "Redesigned the site :)"],
   ["Version 1.216 — March 24, 2026", "Added 2 games:<br>- 2 Minute Football<br>- Slither.io"],
   ["Version 1.215 — February 3, 2026", "Added Filters"]
+];
+ 
+// Top ticker: whatever you put here scrolls across the top of the page.
+// "{latest}" is replaced with the newest changelog entry. Leave the list empty ([]) to show only the latest changelog entry.
+const TICKER = [
+  "Welcome to pulsixgames!",
+  "{latest}",
+  "Request a game with the form at the bottom of the page"
 ];
  
 /* Firebase (optional): paste your web-app config from
@@ -1646,7 +1663,6 @@ function openGame(url) {
   const frame = document.createElement('iframe');
   frame.title = 'Game';
   frame.allow = 'fullscreen; autoplay; gamepad; clipboard-write';
-  frame.allowFullscreen = true;
   frame.src = url;
   frame.addEventListener('load', () => { try { frame.contentWindow.focus(); } catch {} });
   gameView.replaceChildren(frame);
@@ -1727,6 +1743,9 @@ $('#random').onclick = () => {
   openGame(games[Math.floor(Math.random() * games.length)].href);
 };
  
+/* ---- chat (opens in the game viewer, so the Home button brings you back) ---- */
+$('#chat').onclick = () => openGame('./chat.html');
+ 
 /* ---- changelog ---- */
 let shown = 1;   // how many entries are visible
  
@@ -1764,8 +1783,10 @@ addEventListener('scroll', () => {
   prog.style.transform = `scaleX(${scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)})`;
 }, { passive: true });
  
-const newest = (LOG[0][0] + ' // ' + LOG[0][1].replace(/<br>/g, ' ').replace(/<[^>]+>/g, '')).toUpperCase();
-$('#tick').textContent = `${newest}   ///   ${newest}   ///   ${newest}`;
+const latest = LOG[0][0] + ' // ' + LOG[0][1].replace(/<br>/g, ' ').replace(/<[^>]+>/g, '');
+const tickText = (TICKER.length ? TICKER : ['{latest}']).map(t => t.replace('{latest}', latest)).join('   ///   ');
+$('#tick').textContent = `${tickText}   ///   ${tickText}   ///   ${tickText}`;
+$('#tick').style.animationDuration = Math.max(20, tickText.length * 0.55) + 's';   // longer text scrolls for longer, so the speed stays the same
  
 addEventListener('keydown', e => {
   if (e.key !== '/' || /INPUT|TEXTAREA/.test(document.activeElement.tagName) || document.body.classList.contains('playing')) return;
