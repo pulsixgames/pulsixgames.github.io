@@ -516,7 +516,7 @@ footer a { color: var(--mint); }
 #gameView.open { opacity: 1; visibility: visible; transition: opacity .3s ease; }
 #gameView iframe { display: block; width: 100%; height: 100%; border: 0; }
 body.playing { overflow: hidden; }
- 
+
 /* while a game is open, freeze the menu behind it so the game gets all of the device's power */
 body.playing *, body.playing *::before, body.playing *::after { animation-play-state: paused !important; }
 body.playing::before, body.playing::after { display: none; }   /* spotlight + scanlines */
@@ -754,39 +754,39 @@ html[data-theme=pulsix] .sw[aria-checked=true] { background: var(--mint); }
 /* ==========================================================================
    12b. EXTRA POLISH  (cooler UI: spotlight, ticker, scroll bar, card details)
    ========================================================================== */
- 
+
 /* mouse spotlight over the background (--sx / --sy are set by the script) */
 html[data-fx] body::before {
   content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none;
   background: radial-gradient(320px circle at var(--sx, 50%) var(--sy, 40%), rgba(var(--ink-rgb), .13), transparent 70%);
 }
- 
+
 /* scroll progress bar (top of the page) */
 #prog { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 120; background: var(--mint); transform: scaleX(0); transform-origin: left; pointer-events: none; }
- 
+
 /* sidebar: items nudge right on hover, the active one gets an arrow */
 .nav button:hover:not(:active) { transform: translateX(5px); }
 .nav .on::after { content: "◀"; font-size: .7rem; }
- 
+
 /* search: "/" hint + glow */
 #search kbd { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font: 600 .75rem monospace; padding: 2px 8px; border: 1px solid var(--line); border-radius: 6px; color: var(--dim); pointer-events: none; transition: opacity .2s; }
 #search input:focus { outline: none; box-shadow: 0 0 0 4px rgba(var(--glow), .18); }
 #search input:focus ~ kbd { opacity: 0; }
- 
+
 /* news ticker (built from the latest changelog entry) */
 .ticker { overflow: hidden; margin-top: 16px; padding: 7px 0; white-space: nowrap; border-block: 1px solid var(--line); font: 600 .78rem 'DM Sans'; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
 .ticker span { display: inline-block; padding-left: 100%; animation: tick 30s linear infinite; }
 @keyframes tick { to { transform: translateX(-100%); } }
 html[data-fx] .ticker { font-family: 'Times New Roman', Times, Georgia, serif; }
- 
+
 /* game cards: black and white until you hover */
 html[data-fx] .card img { filter: grayscale(1) contrast(1.08); transition: filter .35s; }
 html[data-fx] .card:hover img { filter: none; }
- 
+
 /* page boot: the menu is "scanned in" on load */
 @keyframes boot { from { clip-path: inset(0 0 100% 0); opacity: 0; } 60% { opacity: 1; } to { clip-path: inset(0); } }
 html[data-fx] main { animation: boot .7s steps(14, end); }
- 
+
 /* ==========================================================================
    13. SMALL SCREENS
    ========================================================================== */
@@ -828,6 +828,7 @@ html[data-fx] main { animation: boot .7s steps(14, end); }
       <div class="sub">More</div>
       <button id="random">Random game 🎲</button>
       <button id="chat">Chat 💬</button>
+      <button id="proxy">Proxy 🌐</button>
       <button id="openSettings">Settings <span class="gear">⚙</span></button>
     </nav>
  
@@ -849,7 +850,7 @@ html[data-fx] main { animation: boot .7s steps(14, end); }
     </div>
  
     <div class="ticker"><span id="tick"></span></div>
- 
+
     <h2 class="head" id="head">Games</h2>
  
     <!-- filters -->
@@ -1092,8 +1093,6 @@ html[data-fx] main { animation: boot .7s steps(14, end); }
     <a href="./games/worldshardestgame2/" class="game-link"><div class="game-card" data-name="worlds hardest game 2" data-category="puzzle action"><div class="game-image"><img src="./siteimages/gamelogos/worldshardestgame2.png" alt="World's Hardest Game 2" /></div><div class="game-name">World's Hardest Game 2</div></div></a>
     <a href="./games/xtrenchrun/" class="game-link"><div class="game-card" data-name="x-trench run" data-category="driving action"><div class="game-image"><img src="./siteimages/gamelogos/xtrenchrun.png" alt="X-Trench Run" /></div><div class="game-name">X-Trench Run</div></div></a>
     <a href="./games/yohoho/" class="game-link"><div class="game-card" data-name="yohoho.io" data-category="action"><div class="game-image"><img src="./siteimages/gamelogos/yohoho.png" alt="Yohoho.io" /></div><div class="game-name">Yohoho.io</div></div></a>
-    <a href="./tiktok.html" class="game-link"><div class="game-card" data-name="Tiktok"><div class="game-image"><img src="./siteimages/gamelogos/tiktok.png" alt="Tiktok" /></div><div class="game-name">🌐 Tiktok 🌐</div></div></a>
-    <a href="./youtube.html" class="game-link"><div class="game-card" data-name="youtube"><div class="game-image"><img src="./siteimages/gamelogos/youtube.png" alt="YouTube" /></div><div class="game-name">🌐 YouTube 🌐</div></div></a>
   </template>
  
   <!-- ======================= 7. SCRIPT ======================= -->
@@ -1142,6 +1141,7 @@ const CATS = ['all', 'action', 'platformer', 'shooter', 'driving', 'sports', 'pu
  
 // Changelog, newest first
 const LOG = [
+  ["Version 1.4 — November 14, 2026", "Added Chat and Proxy features!"],
   ["Version 1.307 — November 12, 2026", "Added 1 game:<br> - Geometry Dash Wave"],
   ["Version 1.306 — November 5, 2026", "Smoother animations, press effects on buttons, a back-to-top button, optional accounts, and much more."],
   ["Version 1.305 — November 5, 2026", "New look, plus accounts: save favorites and recently played."],
@@ -1159,9 +1159,9 @@ const LOG = [
 const TICKER = [
   "Welcome to pulsixgames!",
   "{latest}",
-  "Request a game with the form at the bottom of the page"
+  "Request a game with the form at the bottom of the page!"
 ];
- 
+
 /* Firebase (optional): paste your web-app config from
    Firebase console > Project settings > Your apps.
    Leave apiKey empty and accounts are stored in this browser only. */
@@ -1245,7 +1245,7 @@ function speedUp() {
   if (!root.hasAttribute('data-fx') || root.classList.contains('no-glitch') || document.body.classList.contains('playing')) return;
   const scroll = document.querySelector('.bg').getAnimations().find(a => a.animationName === 'tileScroll');
   if (!scroll) return;
- 
+
   const t0 = performance.now();
   (function step(now) {
     const p = Math.min(Math.max((now - t0) / SPEED_DUR, 0), 1);               // 0 to 1 (clamped: the frame time can be a hair before t0)
@@ -1745,7 +1745,8 @@ $('#random').onclick = () => {
  
 /* ---- chat (opens in the game viewer, so the Home button brings you back) ---- */
 $('#chat').onclick = () => openGame('./chat.html');
- 
+$('#proxy').onclick = () => openGame('./proxy.html');
+
 /* ---- changelog ---- */
 let shown = 1;   // how many entries are visible
  
@@ -1777,23 +1778,23 @@ addEventListener('pointermove', e => {
     document.documentElement.style.setProperty('--sy', e.clientY + 'px');
   });
 }, { passive: true });
- 
+
 const prog = $('#prog');
 addEventListener('scroll', () => {
   prog.style.transform = `scaleX(${scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)})`;
 }, { passive: true });
- 
+
 const latest = LOG[0][0] + ' // ' + LOG[0][1].replace(/<br>/g, ' ').replace(/<[^>]+>/g, '');
 const tickText = (TICKER.length ? TICKER : ['{latest}']).map(t => t.replace('{latest}', latest)).join('   ///   ');
 $('#tick').textContent = `${tickText}   ///   ${tickText}   ///   ${tickText}`;
 $('#tick').style.animationDuration = Math.max(20, tickText.length * 0.55) + 's';   // longer text scrolls for longer, so the speed stays the same
- 
+
 addEventListener('keydown', e => {
   if (e.key !== '/' || /INPUT|TEXTAREA/.test(document.activeElement.tagName) || document.body.classList.contains('playing')) return;
   e.preventDefault();
   $('#q').focus();
 });
- 
+
 /* ==========================================================================
    8. START
    ========================================================================== */
