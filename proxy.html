@@ -179,7 +179,10 @@ html[data-theme=pulsix] .btn.ghost { background: rgba(47,47,47,.07); }
 .home { position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; padding: 24px; text-align: center; }
 .view.loaded .home { display: none; }
 .home h2 { font: 800 clamp(1.8rem, 4vw, 2.6rem) 'Bricolage Grotesque'; color: var(--text); letter-spacing: -.02em; }
-.warn { color: #ff8fa8; font-size: .9rem; max-width: 420px; }
+.warn { color: #ff8fa8; font-size: .9rem; max-width: 420px; margin-inline: auto; }
+.setup { display: none; gap: 8px; width: min(440px, 100%); margin: 6px auto 0; }
+.setup.show { display: flex; }
+.setup input { flex: 1; min-width: 0; }
 
 @media (max-width: 820px) {
   body { flex-direction: column; }
@@ -229,6 +232,10 @@ html[data-theme=pulsix] .btn.ghost { background: rgba(47,47,47,.07); }
         <h2>Browse anything</h2>
         <p>Type a website or a search above, or pick a quick link.</p>
         <p class="warn" id="warn"></p>
+        <div class="setup" id="setup">
+          <input id="server-in" placeholder="https://yourname.onrender.com" autocomplete="off" spellcheck="false">
+          <button class="btn main" id="server-save">Save</button>
+        </div>
       </div>
       <iframe id="frame" title="Page"></iframe>
     </div>
@@ -244,9 +251,25 @@ const $ = s => document.querySelector(s);
    SERVER = the address of your proxy server once it is online (see proxy-server.js),
    for example 'https://pulsix-proxy.onrender.com'  (no slash at the end).
    ========================================================================== */
-const SERVER = '';
-const PROXY  = SERVER + '/proxy?url=';
-const PING   = SERVER + '/ping';
+const SERVER = 'https://pulsix-proxy.onrender.com';
+
+// tidies whatever was typed: adds https:// if it is missing and drops any path or trailing slash
+const cleanServer = v => {
+  v = (v || '').trim();
+  if (!v) return '';
+  if (!/^https?:\/\//i.test(v)) v = 'https://' + v;
+  try { return new URL(v).origin; } catch (e) { return ''; }
+};
+
+// an address saved from the box on this page (or from opening  proxy.html?server=https://your-address ) wins over SERVER above
+const fromLink = new URLSearchParams(location.search).get('server');
+if (fromLink) { try { localStorage.setItem('proxyServer', cleanServer(fromLink)); } catch (e) {} }
+let saved = '';
+try { saved = localStorage.getItem('proxyServer') || ''; } catch (e) {}
+
+const BASE  = cleanServer(saved) || cleanServer(SERVER);
+const PROXY = BASE + '/proxy?url=';
+const PING  = BASE + '/ping';
 const SEARCH = 'https://html.duckduckgo.com/html/?q=';   // used when you type words instead of an address
 
 
@@ -264,6 +287,7 @@ function toUrl(text) {
 
 // shows a page in the frame
 function load(url) {
+  if (!BASE) return needSetup();
   $('#addr').value = url;
   $('#view').classList.add('loaded');
   $('#frame').src = PROXY + encodeURIComponent(url);
@@ -277,6 +301,7 @@ const visit = url => { trail.splice(at + 1); trail.push(url); at = trail.length 
 function go(text) {
   const url = toUrl(text);
   if (!url) return;
+  if (!BASE) return needSetup();
   visit(url);
   load(url);
 }
@@ -315,10 +340,38 @@ $('#back').onclick = () => {
    ========================================================================== */
 const setStatus = (msg, color) => { $('#status').textContent = msg; $('#status-dot').className = 'dot ' + color; };
 
-fetch(PING).then(r => { if (!r.ok) throw 0; setStatus('Proxy ready', 'green'); }).catch(() => {
+function needSetup() {
+  setStatus('Not set up', 'red');
+  $('#warn').textContent = "No proxy server address yet. Paste your server's address below and press Save.";
+  $('#server-in').value = BASE;
+  $('#setup').classList.add('show');
+}
+
+// no-cors: we only need to know the server answers, so a missing CORS header cannot make a working server look offline
+async function checkServer() {
+  if (!BASE) return needSetup();
+  setStatus('Connecting...', 'orange');
+  for (let i = 0; i < 4; i++) {        // a sleeping free server can take up to a minute to wake up
+    try {
+      await fetch(PING, { mode: 'no-cors', signal: AbortSignal.timeout(20000) });
+      return setStatus('Proxy ready', 'green');
+    } catch (e) {}
+  }
   setStatus('Proxy offline', 'red');
-  $('#warn').textContent = "The proxy server was not found. Put your server's address in SERVER at the top of this script (and make sure the server is running).";
-});
+  $('#warn').textContent = `Could not reach the proxy server at ${BASE}. If it is on a free host it may still be waking up, so try again in a minute. Check the address below if it keeps failing.`;
+  $('#server-in').value = BASE;
+  $('#setup').classList.add('show');
+}
+
+$('#server-save').onclick = () => {
+  const v = cleanServer($('#server-in').value);
+  if (!v) { $('#warn').textContent = 'That does not look like an address. Example: https://yourname.onrender.com'; return; }
+  try { localStorage.setItem('proxyServer', v); } catch (e) {}
+  location.reload();
+};
+$('#server-in').addEventListener('keydown', e => { if (e.key === 'Enter') $('#server-save').click(); });
+
+checkServer();
   </script>
 </body>
 </html>
